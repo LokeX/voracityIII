@@ -1,3 +1,4 @@
+import tables
 import game
 import strutils
 import sequtils
@@ -16,6 +17,7 @@ type
     kills*:seq[PlayerColor]
     pieces:array[5,int]
     cash*:int
+  Visits* = array[1..60,int]
   CashedCards* = seq[tuple[title:string,count:int]]  
   Alias* = array[8,char]
   GameStats*[T,U] = object
@@ -187,27 +189,28 @@ proc newGameStats*:GameStats[string,PlayerKind] =
     cash:cashToWin
   )
 
-proc reportedCashedCards*:CashedCards =
-  let titles = collect:
-    for report in turnReports:
-      for card in report.cards.played[Cashed]: card.title
-  for title in titles.deduplicate:
-    result.add (title,titles.count title)
+proc reportedCashedCards*(turnReports:seq[TurnReport]):CountTable[string] =
+  let 
+    titles = collect:
+      for turnReport in turnReports:
+        for card in turnReport.cards.played[Cashed]: 
+          card.title
+  titles.toCountTable
 
-func reportedVisitsCount*(turnReports:seq[TurnReport]):array[1..60,int] =
+func reportedVisitsCount*(turnReports:seq[TurnReport]):Visits =
   for report in turnReports:
     for move in report.moves:
       if move.toSquare > 0:
         inc result[move.toSquare]
 
-proc readVisitsFile(path:string):array[1..60,int] =
+proc readVisitsFile(path:string):Visits =
   if fileExists path:
     var square = 1
     for line in lines path:
       try: result[square] = line.split[^1].parseInt except:discard
       inc square
 
-func allSquareVisits(reportVisits,fileVisits:array[1..60,int]):array[1..60,int] =
+func allSquareVisits(reportVisits,fileVisits:Visits):Visits =
   for idx in 1..60:
     result[idx] = reportVisits[idx] + fileVisits[idx]
 
@@ -224,20 +227,18 @@ proc readCashedCardsFrom(path:string):CashedCards =
       try: result.add (lineSplit[0],lineSplit[^1].strip.parseInt)
       except:discard
 
-proc allCashedCards(path:string):CashedCards =
-  result = readCashedCardsFrom path
-  for card in reportedCashedCards():
-    if (let idx = result.mapIt(it.title).find card.title; idx != -1):
-      result[idx].count = card.count+result[idx].count
-    else: result.add card
+proc andAllCashedCardsFrom(turnReports:seq[TurnReport],path:string):CashedCards =
+  var reported = turnReports.reportedCashedCards()
+  for (title,count) in readCashedCardsFrom path:
+    reported.inc(title,count)
+  reported.pairs.toSeq
 
-proc writeCashedCardsTo*(path:string) =
-  writeFile(
-    path,allCashedCards(path)
+proc writeCashedCardsTo*(turnReports:seq[TurnReport],path:string) =
+  writeFile(path,
+    turnReports.andAllCashedCardsFrom(path)
     .mapIt(it.title&": "&($it.count))
     .join "\n"
   )
-
 func aliasToChars(alias:string):Alias =
   for i,ch in alias:
     if i < result.len:
@@ -294,7 +295,7 @@ proc readGameStatsFrom*(path:string) =
 
 proc writeGamestats* =
   writeSquareVisitsTo visitsFile
-  writeCashedCardsTo cashedFile
+  turnReports.writeCashedCardsTo cashedFile
   if players.anyHuman and players.anyComputer:
     echo "nr of stat games: ",gameStats.len
     gameStats.add newGameStats()

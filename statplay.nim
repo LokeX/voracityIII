@@ -1,3 +1,5 @@
+import sugar
+import tables
 import play
 import game
 import times
@@ -29,35 +31,24 @@ let
   settings = setSettings getParams()
 
 var
-  visitsCount:array[1..60,int]
-  cashedCards:CashedCards
+  visitsCounts:Visits
+  cashedCards:CountTable[string]
 
-func indexOf(cards:CashedCards,title:string):int =
-  for i,card in cards:
-    if card.title == title:
-      return i
-  -1
-
-proc addCards(cards:CashedCards) =
-  for card in cards:
-    if (let idx = cashedCards.indexOf(card.title); idx > -1):
-      cashedCards[idx].count += card.count
-    else: cashedCards.add card
-
-proc cashedCardsStr:string =
+proc cashedCardsToStr(cashedCards:CountTable[string]):string =
   result.add "Cashed cards:\n"
-  for card in cashedCards.sortedByIt it.count:
-    result.add card.title&": "&($card.count)&"\n"
+  let cashedCards:CashedCards = cashedCards.pairs.toSeq
+  for (title,count) in cashedCards.sorted (a,b) => b.count - a.count:
+    result.add title&": "&($count)&"\n"
 
-proc addVisits(visits:array[1..60,int]) =
+proc addVisits(visitsCount:var Visits,addVisits:Visits) =
   for i in 1..60:
-    visitsCount[i] += visits[i]
+    visitsCount[i] += addVisits[i]
 
-proc visitsCountStr:string =
+proc visitsCountToStr:string =
   result.add "Square visits:\n"
   result.add(
     toSeq(1..60)
-    .mapIt((it,board[it].name,visitsCount[it]))
+    .mapIt((it,board[it].name,visitsCounts[it]))
     .sortedByIt(it[2])
     .mapIt(it[1]&" Nr. "&($it[0])&": "&($it[2]))
     .join "\n"
@@ -85,19 +76,16 @@ for i in 1..settings.nrOfGames:
   echo "game nr: ",i
   while not gameWon:
       aiTakeTurn()
-  endGame()
   if recordStats:
+    recordTurnReport()
     gameStats.add newGameStats()
-    addVisits turnReports.reportedVisitsCount
-    addCards reportedCashedCards()
-  # if turnReports[^1].turnNr < 10:
-  #   for turnReport in turnReports:
-  #     dumpTurnReport(turnReport)
+    visitsCounts.addVisits turnReports.reportedVisitsCount
+    cashedCards.merge turnReports.reportedCashedCards()
 
 if recordStats:
   let
-    cards = cashedCardsStr()
-    visits = visitsCountStr()
+    cards = cashedCardsToStr(cashedCards)
+    visits = visitsCountToStr()
     stats = statsStr time
   writeFile(fileName,cards&visits&stats)
   echo cards
