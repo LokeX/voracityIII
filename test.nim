@@ -39,3 +39,10 @@ echo c
 
 c = "test".strToChars typeof c
 echo c
+
+let 
+  year = 2000
+  leap = year mod 4 == 0 and not (year mod 100 == 0 and year mod 400 != 0)
+
+echo leap
+

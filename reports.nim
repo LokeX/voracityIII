@@ -301,9 +301,8 @@ proc latestTurnReport(player:Player):TurnReport =
         return report
 
 iterator finalReports:(PlayerColor,seq[string]) =
-  var turnReport:TurnReport
   for player in players:
-    turnReport = player.latestTurnReport
+    let turnReport = player.latestTurnReport
     yield (
       player.color,
       turnReport.reportText & 
@@ -358,7 +357,7 @@ let (robotoPurple,robotoYellow,robotoGreen,robotoWhite,robotolh7) = block:
   (robotoPurple,robotoYellow,robotoGreen,robotoWhite,robotolh7)
 
 proc statsBatchSpans:seq[Span] =
-  if gameStats.len > 0:
+  if anyGameStats():
     let stats = getMatchingStats()
     if stats.hasData:
       echo "stats has data"
@@ -446,5 +445,5 @@ proc handleReportMovesAnimations* =
 template initReports* =
   playerBatches = newPlayerBatches()
   reportBatches = initReportBatches()
-  readGameStatsFrom statsFile
+  # readGameStatsFrom statsFile
   updateStatsBatch()

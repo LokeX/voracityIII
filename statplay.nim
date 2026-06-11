@@ -79,8 +79,8 @@ for i in 1..settings.nrOfGames:
   if recordStats:
     recordTurnReport()
     gameStats.add newGameStats()
-    visitsCounts.addVisits turnReports.reportedVisitsCount
-    cashedCards.merge turnReports.reportedCashedCards()
+    visitsCounts.addVisits reportedVisitsCount()
+    cashedCards.merge reportedCashedCards()
 
 if recordStats:
   let
