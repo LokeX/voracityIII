@@ -1,6 +1,6 @@
-# voracityII
+# voracityIII
 
-Voracity 2.0 is the latest iteration of the digital version of Voracity the boardgame.
+Voracity 3.0 is the latest iteration of the digital version of Voracity the boardgame.
 
 It's written entirely in Nim.
 
