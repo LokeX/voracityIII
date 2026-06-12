@@ -1,6 +1,7 @@
 import win
 import batch
 import game
+import eval
 import gameplay
 import stat
 import reports
@@ -492,6 +493,7 @@ proc handlePinnedCards*(m:KeyEvent) =
 proc discardCard* =
   if (let slotNr = turnPlayer.mouseOnCardSlot; slotNr > -1):
     turnPlayer.hand.playTo(blueDeck,slotNr)
+    turnPlayer.hand = turnPlayer.sortBlues
 
 template initCards* =
   addImage("blueback",blueBack)

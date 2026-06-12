@@ -84,6 +84,8 @@ var
   playerKinds*:array[6,PlayerKind]
   players*:seq[Player]
   selectedMove*:Move
+  statGame*:bool
+  gameWon*:bool
 
 proc newBoard*(path:string):Board =
   var count = 0

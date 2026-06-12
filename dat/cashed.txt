@@ -1,108 +1,108 @@
-Redemption: 63
-Stiffs: 36
-Ludomania: 39
-Broken bones: 51
-Safe bet: 30
-Grapevine: 55
-Sweethearts: 25
-Polterabend: 94
-Faulty towers: 42
-Loads of stuff: 74
-High society: 60
-Knocked out: 57
-Chicks in cages: 69
-Drugdealer: 49
-Trans-action: 28
-Secret weapon: 45
-Moonshine: 98
-Outstanding: 56
-Containment: 62
-Deadweight: 32
-Hooters: 43
-Brotherhood: 43
-Bail: 44
-Recycling: 39
-Specimens: 29
-Home invasion: 66
-Stove away: 37
-Grand designs: 52
-Demolition: 47
-Human resources: 67
-Deadly cargo: 45
-Agent: 52
-Borderless: 38
-Globalist: 42
-Bootlegging: 40
-Lawfare: 52
-Terrorism: 28
-Lord of War: 25
-Rentseeking: 37
-Protection: 77
-Duty free: 59
-Hooked: 61
-Open house: 35
-Rock solid claims: 67
-Pimp: 54
-Concuctions: 46
-Circle jerk: 37
-Legalese: 56
-Higher powers: 46
-Nose job: 44
-Insurgency: 44
-Outsider: 47
-Prescriptions: 47
-Bouncing: 76
-Side effects: 31
-Diamonds are...: 47
-Blood diamants: 35
-Foreign aid: 52
-Color revolution: 40
-Acquittal: 43
-Financier: 36
-Underhanded: 44
-Up yours: 39
-Choireboys: 44
-Knock knock: 65
-Sing a long song: 67
-White collars: 19
-Broman escorte: 22
-Cold meds: 61
-Et spiritus sancti: 63
-Occupational hazard: 52
-VIP Lounge: 40
-Small arms: 46
-Express demands: 41
-Ramtheft: 39
-Golden chains: 41
-Bodyguard: 25
-Mayor: 43
-Homebrew: 51
-Meat grinder: 29
-Judicial murder: 29
-Flay'em: 45
-Projects: 47
-Advisory board: 56
-Usery: 48
-Financing: 42
-Lucky bastard: 37
-Lipstick on a pig: 36
-Laundry: 36
-Debt to society: 40
-Transitions: 21
-Trance: 60
-Bodycount: 27
+Coup: 27
 Informer: 24
-Rentals: 40
+Concuctions: 50
+Agent: 53
+Outstanding: 59
+Slumlord: 43
+Brotherhood: 44
+Globalist: 45
+Knock knock: 67
+Judicial murder: 31
+Rock solid claims: 71
+Choireboys: 48
+Heartless: 18
+Polterabend: 101
 Healthplan: 38
-Slumlord: 42
-Heartless: 17
+Bodyguard: 26
+Demolition: 48
+Spy: 22
+Meat grinder: 30
+Mayor: 44
+Open house: 35
+Outsider: 49
+Up yours: 43
 Gangbangers: 35
-Aiding and abetting: 23
-Coup: 26
-Blood suckers: 36
-Infiltration: 31
-Spy: 20
-Addictions: 19
+Ludomania: 44
+Chicks in cages: 70
+Human resources: 71
+Grapevine: 58
+Deadweight: 35
+Prescriptions: 52
+VIP Lounge: 40
+Et spiritus sancti: 64
+Home invasion: 71
+Deadly cargo: 47
+Protection: 84
 Corruption: 14
-Burial at sea: 39
-Razia: 26
+Underhanded: 46
+Lipstick on a pig: 37
+Knocked out: 61
+Transitions: 23
+Bouncing: 81
+Cold meds: 63
+Infiltration: 31
+Drugdealer: 51
+Acquittal: 45
+Grand designs: 54
+Bootlegging: 40
+Burial at sea: 43
+Lucky bastard: 38
+Lawfare: 56
+Containment: 66
+Rentseeking: 38
+Stove away: 38
+Specimens: 31
+Side effects: 34
+Usery: 51
+Hooked: 64
+Color revolution: 42
+Financier: 38
+Rentals: 46
+Broken bones: 54
+Bail: 45
+Legalese: 61
+Ramtheft: 41
+Higher powers: 47
+Debt to society: 42
+Sing a long song: 69
+Borderless: 40
+Financing: 47
+Diamonds are...: 51
+Flay'em: 50
+Faulty towers: 46
+Broman escorte: 24
+Secret weapon: 47
+Moonshine: 101
+Blood suckers: 38
+Trance: 63
+White collars: 19
+Sweethearts: 27
+Redemption: 66
+Bodycount: 28
+Laundry: 40
+Nose job: 45
+Lord of War: 25
+Razia: 29
+Circle jerk: 40
+High society: 64
+Small arms: 49
+Terrorism: 29
+Foreign aid: 56
+Hooters: 45
+Stiffs: 37
+Pimp: 56
+Addictions: 19
+Aiding and abetting: 23
+Loads of stuff: 76
+Blood diamants: 35
+Express demands: 43
+Duty free: 64
+Projects: 50
+Advisory board: 60
+Recycling: 39
+Occupational hazard: 55
+Golden chains: 43
+Homebrew: 52
+Safe bet: 33
+Trans-action: 28
+Insurgency: 46

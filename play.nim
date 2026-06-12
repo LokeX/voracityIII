@@ -23,8 +23,8 @@ var
   killDialog*:proc(square:int)
 
   updateKeybar*:bool
-  gameWon*:bool
-  statGame*:bool
+  # gameWon*:bool
+  # statGame*:bool
   autoEndTurn* = true
 
   # Interface state
@@ -295,7 +295,6 @@ proc aiDraw =
   while turn.undrawnBlues > 0:
     drawCardFrom blueDeck
     playCashPlansTo blueDeck
-  if phase != PostMove:
     hypo = turnPlayer.hypotheticalInit
   phase = Reroll
 

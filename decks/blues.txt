@@ -409,7 +409,7 @@ Home invasion
 deed:
 Lucky bastard
 {12}
-50000
+100000
 deed:
 Demolition
 {43}

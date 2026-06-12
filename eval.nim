@@ -20,21 +20,22 @@ type
     cards:seq[BlueCard]
     cash:int
 
-# var
-#   diceMoves:DiceMoves
-
 func legalPieces*(hypothetical:Hypothetic):seq[int] =
   for _,square in hypothetical.pieces.legalPiecesIter hypothetical.cash:
     if square > -1: 
       result.add square
 
 func without(pieces:openArray[int],removePiece:int):seq[int] =
+  # debugecho pieces
+  # debugEcho removePiece
   for idx,piece in pieces:
     if piece == removePiece:
       if idx < pieces.high:
         result.add pieces[idx+1..pieces.high]
       return
     else: result.add piece
+  # debugEcho result
+  # debugEcho ""
  
 func covers(pieceSquare,coverSquare:int):bool =
   if pieceSquare == coverSquare:
@@ -52,6 +53,7 @@ func nrOfcovers(pieces,squares:seq[int],maxDepth,depth:int):int =
     if coverPieces.len > 0: 
       idx = i+1
       break
+  # debugEcho coverPieces
   if coverPieces.len == 0: 
     depth
   elif idx == squares.len:
@@ -68,7 +70,7 @@ func nrOfcovers(pieces,squares:seq[int],maxDepth,depth:int):int =
         break
     coverDepth
 
-template nrOfcovers(pieces,squares:untyped):untyped = 
+template nrOfcovers*(pieces,squares:untyped):untyped = 
   pieces.nrOfcovers(squares,squares.len,0)
 
 func coversAll(pieces,squares:seq[int]):bool = 
@@ -390,6 +392,12 @@ func squareBase(cards:seq[BlueCard]):seq[int] =
     if card.squares.oneInMany.len > 0:
       result.add card.squares.oneInMany[0]
 
+func squareBase(covered,uncovered:seq[BlueCard]):seq[int] =
+  result = uncovered.squareBase
+  if covered.len > 0: 
+    let coveredBase = covered.squareBase
+    if coveredBase.anyIt it in result: result = coveredBase 
+
 proc sortBlues*(player:Player):seq[BlueCard] =
   if player.hand.len <= 3: return player.hand
   var 
@@ -408,15 +416,19 @@ proc sortBlues*(player:Player):seq[BlueCard] =
     hypo.board = hypo.baseEvalBoard
     result.add hypo.evalBlues
   elif hypo.cards.len > 0: result.add hypo.cards
+  if not statGame: echo "sort hypo.cards: ",result
   if hypo.cards.len < 3 and uncovered.len > 1:
-    let squareBase = 
-      if hypo.cards.len == 0: uncovered.mapIt(it.card).squareBase
-      else: hypo.cards.squareBase
+    # let squareBase = 
+    #   if hypo.cards.len == 0: uncovered.mapIt(it.card).squareBase
+    #   else: hypo.cards.squareBase
+    let squareBase = squareBase(hypo.cards,uncovered.mapIt it.card)
+    if not statGame: debugEcho "sort squareBase: ",squareBase
     for (card,value) in uncovered.mItems:
       value += card.squares.required.deduplicate.mapIt(squareBase.count it).sum
       if card.squares.oneInMany.len > 0:
         value += squareBase.count card.squares.oneInMany[0]
     uncovered.sort (a,b) => b.value-a.value
+    if not statGame: debugEcho "sort uncovered: ",uncovered
   result.add uncovered.mapIt it.card
 
 proc eventMovesEval*(player:Player,event:BlueCard):seq[Move] =

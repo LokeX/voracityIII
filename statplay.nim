@@ -23,18 +23,7 @@ proc setSettings(prms:openArray[int]):tuple[nrOfGames,nrOfPlayers:int] =
     result.nrOfGames = prms[0]
   elif prms.len > 1: (result.nrOfGames,result.nrOfPlayers) = (prms[0],prms[1])
 
-const
-  fileName = "dat\\statlog.txt"
-
-let
-  time = cpuTime()
-  settings = setSettings getParams()
-
-var
-  visitsCounts:Visits
-  cashedCards:CountTable[string]
-
-proc cashedCardsToStr(cashedCards:CountTable[string]):string =
+proc toStr(cashedCards:CountTable[string]):string =
   result.add "Cashed cards:\n"
   let cashedCards:CashedCards = cashedCards.pairs.toSeq
   for (title,count) in cashedCards.sorted (a,b) => b.count - a.count:
@@ -44,7 +33,7 @@ proc addVisits(visitsCount:var Visits,addVisits:Visits) =
   for i in 1..60:
     visitsCount[i] += addVisits[i]
 
-proc visitsCountToStr:string =
+proc toStr(visitsCounts:Visits):string =
   result.add "Square visits:\n"
   result.add(
     toSeq(1..60)
@@ -54,39 +43,54 @@ proc visitsCountToStr:string =
     .join "\n"
   )
 
-proc statsStr(time:float):string =
-  let stats = getMatchingStats()
+proc statsStr(nrOfGames,turnCount:int,time:float):string =
   result.add "Time: "&timeFmt(cpuTime()-time)&"\n"
-  result.add "Games: "&($stats.games)&"\n"
-  result.add "Turns: "&($stats.turns)&"\n"
+  result.add "Games: "&($nrOfGames)&"\n"
+  result.add "Turns: "&($turnCount)&"\n"
   result.add "avgTurns: "
-  result.add formatFloat(float(stats.turns)/float(stats.games),ffDecimal,2)&"\n"
+  result.add formatFloat(float(turnCount)/float(nrOfGames),ffDecimal,2)&"\n"
+
+proc setNrOfComputerPlayers(nrOfPlayers:int) =
+  for i in 0..playerKinds.high:
+    if i < nrOfPlayers:
+      playerKinds[i] = Computer
+    else: playerKinds[i] = None
+
+
+const
+  fileName = "dat\\statlog.txt"
+
+let
+  time = cpuTime()
+  settings = getParams().setSettings()
+
+var
+  turnCount = 0
+  visitsCounts:Visits
+  cashedCards:CountTable[string]
 
 initGame()
-statGame = true
+setNrOfComputerPlayers settings.nrOfPlayers
 verbose = commandLineParams().anyIt it.toLower == "-v"
-for i in 0..playerKinds.high:
-  if i < settings.nrOfPlayers:
-    playerKinds[i] = Computer
-  else: playerKinds[i] = None
+statGame = true
 
-for i in 1..settings.nrOfGames:
+for gameNr in 1..settings.nrOfGames:
   setupGame()
   startGame()
-  echo "game nr: ",i
+  echo "game nr: ",gameNr
   while not gameWon:
       aiTakeTurn()
   if recordStats:
+    turnCount += turnReport.turnNr
     recordTurnReport()
-    gameStats.add newGameStats()
     visitsCounts.addVisits reportedVisitsCount()
     cashedCards.merge reportedCashedCards()
 
 if recordStats:
   let
-    cards = cashedCardsToStr(cashedCards)
-    visits = visitsCountToStr()
-    stats = statsStr time
+    cards = cashedCards.toStr()
+    visits = visitsCounts.toStr()
+    stats = statsStr(settings.nrOfGames,turnCount,time)
   writeFile(fileName,cards&visits&stats)
   echo cards
   echo visits

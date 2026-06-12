@@ -47,7 +47,7 @@ const
   statsFile = "dat\\stats.dat"
 
 var
-  gameStats*:seq[GameStats[string,PlayerKind]]
+  gameStats:seq[GameStats[string,PlayerKind]]
   turnReports*:seq[TurnReport]
   turnReport*:TurnReport
   playerHandles*:array[6,string]
@@ -237,7 +237,7 @@ proc getMatchingStats*:MatchingStats =
       result.humanPercent = ((result.humanWins.toFloat/matches.len.toFloat)*100)
         .formatFloat(ffDecimal,2)
 
-proc newGameStats*:GameStats[string,PlayerKind] =
+proc newGameStats:GameStats[string,PlayerKind] =
   GameStats[string,PlayerKind](
     turnCount:turnReport.turnNr,
     playerKinds:playerKinds,

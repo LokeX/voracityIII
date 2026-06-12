@@ -46,3 +46,9 @@ let
 
 echo leap
 
+import eval
+
+let
+  pieces = @[28,39,46,56,8]
+
+echo pieces.nrOfCovers @[11]

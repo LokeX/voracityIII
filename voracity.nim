@@ -76,8 +76,6 @@ proc menuSelection =
       nextGameState()
 
 proc humanPlayLeftClick =
-  # if turn.nr > 0 and mouseOnDice() and mayReroll():
-  #   startDiceRoll()
   if turn.undrawnBlues > 0 and mouseOn drawPileArea:
     drawCard()
   elif not isRollingDice():
