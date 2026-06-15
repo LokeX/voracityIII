@@ -83,13 +83,15 @@ proc playCashPlansTo*(deck:var Deck) =
     initialCash = turnPlayer.cash
     cashedPlans = turnPlayer.cashInPlansTo deck
   if cashedPlans.len > 0:
+    if turnPlayer.kind == Human:
+      turnPlayer.hand = turnPlayer.sortBlues
     updateTurnReport(cashedPlans,Cashed)
     turnPlayer.update = true
     playSound "coins-to-table-2"
     if initialCash < cashToWin and turnPlayer.cash >= cashToWin:
+      finalizeTurnReport()
+      # recordTurnReport()
       setConfigStateTo GameWon
-      if not verbose:
-        echo "game won : ",turnPlayer.cash," cash, in ",turnPlayer.turnNr," turns"
       gameWon = true
     else:
       undrawnBluesUpdate()
@@ -190,7 +192,7 @@ proc move =
   if selectedMove.fromSquare == 0:
     turnPlayer.cash -= piecePrice
   playCashPlansTo blueDeck
-  if not statGame:
+  if turnPlayer.kind == Human: 
     turnPlayer.hand = turnPlayer.sortBlues
   turnPlayer.update = true
   updatePiecesPainter()
@@ -205,6 +207,7 @@ proc decideKillAndMove*(confirmedKill:string) =
   if confirmedKill == "Yes":
     players[killPiece.playerNr].pieces[killPiece.pieceNr] = 0
     updateTurnReport players[killPiece.playerNr].color
+    killMatrixUpdate()
     playSound "Gunshot"
     playSound "Deanscream-2"
   move()
@@ -230,10 +233,10 @@ proc setupGame* =
   players = newDefaultPlayers()
   setConfigStateTo SetupGame
 
-proc endGame* =
-  recordTurnReport()
-  setupGame()
-  soundToPlay.setLen 0
+# proc endGame =
+#   recordTurnReport()
+#   setupGame()
+#   soundToPlay.setLen 0
 
 proc startGame* =
   inc turn.nr
@@ -259,7 +262,8 @@ proc nextTurn =
   playSound "page-flip-2"
   updateTurnReport(turnPlayer.discardCards blueDeck, Discarded)
   turnPlayer.update = true
-  recordTurnReport()
+  # recordTurnReport()
+  finalizeTurnReport()
   nextPlayerTurn()
   initTurnReport()
   if anyHuman players:
@@ -268,10 +272,9 @@ proc nextTurn =
 
 proc nextGameState* =
   if turnPlayer.cash >= cashToWin:
-    endGame()
+    setupGame()
   else:
     if turn.nr == 0:
-      echo "start game"
       startGame()
     else:
       nextTurn()
@@ -285,7 +288,6 @@ proc aiStartTurn =
     phase = EndTurn
   else:
     diceMoves[^1].moves.setLen 0
-    playCashPlansTo blueDeck
     if turn.undrawnBlues == 0: 
       hypo = hypotheticalInit(turnPlayer)
       phase = Reroll

@@ -179,8 +179,8 @@ proc victims(killer:PlayerColor):seq[PlayerColor] =
   for report in turnReports:
     if report.player.color == killer:
       result.add report.kills
-  if killer == turnPlayer.color:
-    result.add turnReport.kills
+  # if killer == turnPlayer.color:
+  #   result.add turnReport.kills
 
 proc killMatrix:KillMatrix =
   for killer in PlayerColor:
@@ -286,27 +286,26 @@ proc reportText(report:TurnReport):seq[string] = @[
   "Discarded: "&report.cards.played[Discarded].mapIt(it.title).join(","),
 ]
 
-proc finalReportText(hand,drawn:seq[BlueCard]):seq[string] = @[
-  "Drawn: "&drawn.mapIt(it.title).join(","),
-  "Hand: "&hand.mapIt(it.title).join(","),
+proc finalReportText(report:TurnReport):seq[string] = @[
+  "Drawn: "&report.cards.played[Drawn].mapIt(it.title).join(","),
+  "Hand: "&report.cards.hand.mapIt(it.title).join(","),
   "Press and hold alt-key to view players hand"
 ]
 
-proc latestTurnReport(player:Player):TurnReport =
-  if player.color == turnPlayer.color: 
-    return turnReport 
-  else:
-    for report in turnReports.reversed:
-      if player.color == report.player.color:
-        return report
+# proc latestTurnReport(player:Player):TurnReport =
+#   # if player.color == turnPlayer.color: 
+#   #   return turnReport 
+#   # else:
+#   for report in turnReports.reversed:
+#     if player.color == report.player.color:
+#       return report
 
 iterator finalReports:(PlayerColor,seq[string]) =
   for player in players:
     let turnReport = player.latestTurnReport
     yield (
       player.color,
-      turnReport.reportText & 
-      finalReportText(player.hand,turnReport.cards.played[Drawn])
+      turnReport.reportText & turnReport.finalReportText
     )
 
 template writeReportBatch(playerColor,reportText:untyped):untyped =
@@ -317,7 +316,7 @@ proc updateReportBatches* =
   if turnPlayer.cash >= cashToWin:
     for playerColor,turnReportText in finalReports():
       writeReportBatch playerColor,turnReportText
-  else: writeReportBatch turnPlayer.color,turnReport.reportText
+  else: writeReportBatch turnPlayer.color,turnPlayer.latestTurnReport.reportText
 
 proc resetReports* =
   for batch in reportBatches.mitems:
@@ -328,8 +327,8 @@ proc resetReports* =
 template gotReport*(player:PlayerColor):untyped =
   reportBatches[player].spansLength > 0
 
-proc reports*(playerColor:PlayerColor):seq[TurnReport] =
-  turnReports.filterIt(it.player.color == playerColor)
+# proc reports*(playerColor:PlayerColor):seq[TurnReport] =
+#   turnReports.filterIt(it.player.color == playerColor)
 
 proc drawReport*(b:var Boxy,playerColor:PlayerColor) =
   if selectedBatch == -1 or playerColor != PlayerColor(selectedBatch):
@@ -430,9 +429,9 @@ proc handlePlayerBatch*(m:KeyEvent) =
     inputBatch.deleteInput
 
 proc reportAnimationMoves*:seq[AnimationMove] =
-  if selectedBatchColor == turnPlayer.color:
-    result.add turnReport.moves.mapIt (it.fromSquare,it.toSquare)
-  elif selectedBatchColor.reports.len > 0: 
+  # if selectedBatchColor == turnPlayer.color:
+  #   result.add turnReport.moves.mapIt (it.fromSquare,it.toSquare)
+  if selectedBatchColor.reports.len > 0: 
     result.add selectedBatchColor
     .reports[^1].moves
     .mapIt (it.fromSquare,it.toSquare)

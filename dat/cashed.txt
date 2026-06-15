@@ -1,108 +1,43 @@
-Coup: 27
-Informer: 24
-Concuctions: 50
-Agent: 53
-Outstanding: 59
-Slumlord: 43
-Brotherhood: 44
-Globalist: 45
-Knock knock: 67
-Judicial murder: 31
-Rock solid claims: 71
-Choireboys: 48
-Heartless: 18
-Polterabend: 101
-Healthplan: 38
-Bodyguard: 26
-Demolition: 48
-Spy: 22
-Meat grinder: 30
-Mayor: 44
-Open house: 35
-Outsider: 49
-Up yours: 43
-Gangbangers: 35
-Ludomania: 44
-Chicks in cages: 70
-Human resources: 71
-Grapevine: 58
-Deadweight: 35
-Prescriptions: 52
-VIP Lounge: 40
-Et spiritus sancti: 64
-Home invasion: 71
-Deadly cargo: 47
-Protection: 84
-Corruption: 14
-Underhanded: 46
-Lipstick on a pig: 37
-Knocked out: 61
-Transitions: 23
-Bouncing: 81
-Cold meds: 63
-Infiltration: 31
-Drugdealer: 51
-Acquittal: 45
-Grand designs: 54
-Bootlegging: 40
-Burial at sea: 43
-Lucky bastard: 38
-Lawfare: 56
-Containment: 66
-Rentseeking: 38
-Stove away: 38
-Specimens: 31
-Side effects: 34
-Usery: 51
-Hooked: 64
-Color revolution: 42
-Financier: 38
-Rentals: 46
-Broken bones: 54
-Bail: 45
-Legalese: 61
-Ramtheft: 41
-Higher powers: 47
-Debt to society: 42
-Sing a long song: 69
-Borderless: 40
-Financing: 47
-Diamonds are...: 51
-Flay'em: 50
-Faulty towers: 46
-Broman escorte: 24
-Secret weapon: 47
-Moonshine: 101
-Blood suckers: 38
-Trance: 63
-White collars: 19
-Sweethearts: 27
-Redemption: 66
-Bodycount: 28
-Laundry: 40
-Nose job: 45
-Lord of War: 25
-Razia: 29
-Circle jerk: 40
-High society: 64
-Small arms: 49
-Terrorism: 29
-Foreign aid: 56
-Hooters: 45
-Stiffs: 37
-Pimp: 56
-Addictions: 19
-Aiding and abetting: 23
-Loads of stuff: 76
-Blood diamants: 35
-Express demands: 43
-Duty free: 64
-Projects: 50
-Advisory board: 60
-Recycling: 39
-Occupational hazard: 55
-Golden chains: 43
-Homebrew: 52
-Safe bet: 33
-Trans-action: 28
-Insurgency: 46
+Coup: 1
+Nose job: 1
+Safe bet: 1
+Side effects: 1
+Circle jerk: 1
+Chicks in cages: 1
+Ludomania: 1
+Financier: 2
+High society: 1
+Usery: 1
+Small arms: 1
+Insurgency: 1
+Foreign aid: 1
+Et spiritus sancti: 2
+Hooters: 1
+Rentals: 1
+Broken bones: 1
+Bail: 1
+Outstanding: 2
+Legalese: 2
+Brotherhood: 1
+Knock knock: 1
+Sing a long song: 2
+Rock solid claims: 1
+Financing: 1
+Diamonds are...: 2
+Choireboys: 1
+Loads of stuff: 1
+Polterabend: 2
+Lipstick on a pig: 1
+Faulty towers: 2
+Knocked out: 1
+Cold meds: 2
+Infiltration: 1
+Trance: 1
+Open house: 1
+Redemption: 1
+Occupational hazard: 1
+Rentseeking: 2
+Trans-action: 1
+Concuctions: 2
+Golden chains: 2
+Lucky bastard: 1

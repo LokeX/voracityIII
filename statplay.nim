@@ -1,9 +1,7 @@
-import sugar
 import tables
 import play
 import game
 import times
-import algorithm
 import os
 import stat
 import strutils
@@ -17,33 +15,17 @@ proc getParams:seq[int] =
     if result.len == 2:
       break
 
-proc setSettings(prms:openArray[int]):tuple[nrOfGames,nrOfPlayers:int] =
+proc setGameSettings:tuple[nrOfGames,nrOfPlayers:int] =
+  let prms = getParams()
   (result.nrOfGames,result.nrOfPlayers) = (100,6)
   if prms.len == 1:
     result.nrOfGames = prms[0]
   elif prms.len > 1: (result.nrOfGames,result.nrOfPlayers) = (prms[0],prms[1])
 
-proc toStr(cashedCards:CountTable[string]):string =
-  result.add "Cashed cards:\n"
-  let cashedCards:CashedCards = cashedCards.pairs.toSeq
-  for (title,count) in cashedCards.sorted (a,b) => b.count - a.count:
-    result.add title&": "&($count)&"\n"
-
 proc addVisits(visitsCount:var Visits,addVisits:Visits) =
-  for i in 1..60:
-    visitsCount[i] += addVisits[i]
+  for i in 1..60: visitsCount[i] += addVisits[i]
 
-proc toStr(visitsCounts:Visits):string =
-  result.add "Square visits:\n"
-  result.add(
-    toSeq(1..60)
-    .mapIt((it,board[it].name,visitsCounts[it]))
-    .sortedByIt(it[2])
-    .mapIt(it[1]&" Nr. "&($it[0])&": "&($it[2]))
-    .join "\n"
-  )
-
-proc statsStr(nrOfGames,turnCount:int,time:float):string =
+proc statsToStr(nrOfGames,turnCount:int,time:float):string =
   result.add "Time: "&timeFmt(cpuTime()-time)&"\n"
   result.add "Games: "&($nrOfGames)&"\n"
   result.add "Turns: "&($turnCount)&"\n"
@@ -56,43 +38,52 @@ proc setNrOfComputerPlayers(nrOfPlayers:int) =
       playerKinds[i] = Computer
     else: playerKinds[i] = None
 
-
 const
   fileName = "dat\\statlog.txt"
 
 let
   time = cpuTime()
-  settings = getParams().setSettings()
+  gameSettings = setGameSettings()
 
 var
   turnCount = 0
   visitsCounts:Visits
   cashedCards:CountTable[string]
+  verbose = commandLineParams().anyIt it.toLower == "-v"
 
 initGame()
-setNrOfComputerPlayers settings.nrOfPlayers
-verbose = commandLineParams().anyIt it.toLower == "-v"
+setNrOfComputerPlayers gameSettings.nrOfPlayers
 statGame = true
 
-for gameNr in 1..settings.nrOfGames:
+for gameNr in 1..gameSettings.nrOfGames:
+  echo "game nr: ",gameNr
   setupGame()
   startGame()
-  echo "game nr: ",gameNr
   while not gameWon:
       aiTakeTurn()
+      if verbose and phase == EndTurn: 
+        finalizeTurnReport()
+        turnReports[^1].dumpTurnReport
+  echo "game won : ",turnPlayer.cash," cash, in ",turn.nr," turns"
   if recordStats:
-    turnCount += turnReport.turnNr
-    recordTurnReport()
+    turnCount += turn.nr
     visitsCounts.addVisits reportedVisitsCount()
     cashedCards.merge reportedCashedCards()
 
 if recordStats:
   let
-    cards = cashedCards.toStr()
+    cards = cashedCards.pairs.toSeq.toStr()
     visits = visitsCounts.toStr()
-    stats = statsStr(settings.nrOfGames,turnCount,time)
+    stats = statsToStr(gameSettings.nrOfGames,turnCount,time)
   writeFile(fileName,cards&visits&stats)
   echo cards
   echo visits
   echo stats
   echo "Wrote to file: "&fileName
+
+echo ""
+echo "Stat - parameter usage:"
+echo "1st param containing a number = nrOfGames   (default = 100)"
+echo "2nd param containing a number = nrOfPlayers (default = 6)"
+echo "-v = Verbose: print each turn played - in detail"
+

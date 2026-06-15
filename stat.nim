@@ -1,3 +1,4 @@
+import algorithm
 import tables
 import game
 import strutils
@@ -49,9 +50,8 @@ const
 var
   gameStats:seq[GameStats[string,PlayerKind]]
   turnReports*:seq[TurnReport]
-  turnReport*:TurnReport
+  # turnReport*:TurnReport
   playerHandles*:array[6,string]
-  verbose* = false
   recordStats* = true
 
   #interface ui control
@@ -66,26 +66,40 @@ template anyGameStats*:untyped =
 
 proc initTurnReport* =
   if recordStats:
-    turnReport = TurnReport()
+    var turnReport = TurnReport()
     turnReport.turnNr = turnPlayer.turnNr
     turnReport.player.color = turnPlayer.color
     turnReport.player.kind = turnPlayer.kind
+    turnReport.pieces = turnPlayer.pieces
+    turnReport.cash = turnPlayer.cash
+    turnReports.add turnReport
     updateTurnReportBatches()
 
 proc updateTurnReport*[T](item:T,playKind:PlayedKind = Drawn) =
   if recordStats:
     when typeOf(T) is Move:
-      turnReport.moves.add item
+      turnReports[^1].moves.add item
     when typeOf(T) is Dice:
-      turnReport.diceRolls.add item
+      turnReports[^1].diceRolls.add item
     when typeof(T) is PlayerColor:
-      turnReport.kills.add item
-      killMatrixUpdate()
+      turnReports[^1].kills.add item
+      # killMatrixUpdate()
     when typeof(T) is BlueCard | seq[BlueCard]:
-      turnReport.cards.played[playKind].add item
+      turnReports[^1].cards.played[playKind].add item
     updateTurnReportBatches()
 
-proc dumpTurnReport(turnReport:TurnReport) =
+proc reports*(playerColor:PlayerColor):seq[TurnReport] =
+  turnReports.filterIt(it.player.color == playerColor)
+
+# proc reports*(player:Player):seq[TurnReport] =
+#   player.color.reports
+
+proc latestTurnReport*(player:Player):TurnReport =
+  for report in turnReports.reversed:
+    if player.color == report.player.color:
+      return report
+
+proc dumpTurnReport*(turnReport:TurnReport) =
   proc moveStr(fromSquare,toSquare,die:int):string =
     "    Die: " & $die &
     ", from: "&board[fromSquare].name&" Nr. " & $board[fromSquare].nr &
@@ -106,26 +120,12 @@ proc dumpTurnReport(turnReport:TurnReport) =
   for square in turnReport.pieces:
     echo "    "&board[square].name&" Nr. " & $board[square].nr
   echo "  Cash: ",turnReport.cash
-  if turnReport.cash >= cashToWin:
-    echo ""
-    echo "Gameover"
-    echo ""
 
-proc recordTurnReport* =
+proc finalizeTurnReport* =
   if recordStats:
-    turnReport.cards.hand = turnPlayer.hand
-    turnReport.cash = turnPlayer.cash
-    turnReport.pieces = turnPlayer.pieces
-    turnReports.add turnReport
-    if verbose: dumpTurnReport(turnReport)
-
-proc reportedCashedCards*:CountTable[string] =
-  let 
-    titles = collect:
-      for turnReport in turnReports:
-        for card in turnReport.cards.played[Cashed]: 
-          card.title
-  titles.toCountTable
+    turnReports[^1].cards.hand = turnPlayer.hand
+    turnReports[^1].cash = turnPlayer.cash
+    turnReports[^1].pieces = turnPlayer.pieces
 
 proc reportedVisitsCount*:Visits =
   for report in turnReports:
@@ -140,18 +140,42 @@ proc readVisitsFile(path:string):Visits =
       try: result[square] = line.split[^1].parseInt except:discard
       inc square
 
-proc squareVisitsIncludingFromFile(path:string):Visits =
+proc reportedSquareVisitsPlusFile(path:string):Visits =
   let 
     reportVisits = reportedVisitsCount()
     fileVisits = readVisitsFile path
   for idx in 1..60:
     result[idx] = reportVisits[idx] + fileVisits[idx]
 
-proc writeSquareVisitsTo(path:string) =
-  var squareVisits:seq[string]
-  for i,visits in squareVisitsIncludingFromFile(path):
-    squareVisits.add board[i].name&" Nr."&($i)&": "&($visits)
-  writeFile(path,squareVisits.join "\n")
+proc toStr*(visitsCounts:Visits):string =
+  result.add "Square visits:\n"
+  let squares:seq[tuple[name:string,visits:int]] = 
+    (1..60).mapIt (board[it].name & " Nr. " & $it,visitsCounts[it])
+  for square in squares.sorted (a,b) => b.visits - a.visits:
+    result.add square.name & ": " & $square.visits & "\n"
+
+# proc toStr*(visitsCounts:Visits):string =
+#   result.add "Square visits:\n"
+#   let squares = (1..60).mapIt (board[it].name,it,visitsCounts[it])
+#   for (name,nr,visits) in squares.sorted (a,b) => b[2] - a[2]:
+#     result.add name & " Nr. " & $nr & ": " & $visits & "\n"
+
+# proc writeSquareVisitsTo(path:string) =
+#   writeFile(path,squareVisitsIncludingFromFile(path).toStr)
+
+# proc writeSquareVisitsTo(path:string) =
+#   var squareVisits:seq[string]
+#   for i,visits in squareVisitsIncludingFromFile(path):
+#     squareVisits.add board[i].name&" Nr."&($i)&": "&($visits)
+#   writeFile(path,squareVisits.join "\n")
+
+proc reportedCashedCards*:CountTable[string] =
+  let 
+    titles = collect:
+      for turnReport in turnReports:
+        for card in turnReport.cards.played[Cashed]: 
+          card.title
+  titles.toCountTable
 
 proc readCashedCardsFrom(path:string):CashedCards =
   if fileExists path:
@@ -160,18 +184,26 @@ proc readCashedCardsFrom(path:string):CashedCards =
       try: result.add (lineSplit[0],lineSplit[^1].strip.parseInt)
       except:discard
 
-proc cashedCardsIncludingFromFile(path:string):CashedCards =
+proc reportedCashedCardsPlusFile(path:string):CashedCards =
   var reported = reportedCashedCards()
   for (title,count) in readCashedCardsFrom path:
     reported.inc(title,count)
   reported.pairs.toSeq
 
-proc writeCashedCardsTo(path:string) =
-  writeFile(path,
-    cashedCardsIncludingFromFile(path)
-    .mapIt(it.title&": "&($it.count))
-    .join "\n"
-  )
+proc toStr*(cashedCards:CashedCards):string =
+  result.add "Cashed cards:\n"
+  for (title,count) in cashedCards.sorted (a,b) => b.count - a.count:
+    result.add title&": "&($count)&"\n"
+
+# proc writeCashedCardsTo(path:string) =
+#   writeFile(path,cashedCardsIncludingFromFile(path).toStr)
+
+# proc writeCashedCardsTo(path:string) =
+#   writeFile(path,
+#     cashedCardsIncludingFromFile(path)
+#     .mapIt(it.title&": "&($it.count))
+#     .join "\n"
+#   )
 
 proc getLoneAlias:string =
   for i in 0..playerHandles.high:
@@ -239,7 +271,7 @@ proc getMatchingStats*:MatchingStats =
 
 proc newGameStats:GameStats[string,PlayerKind] =
   GameStats[string,PlayerKind](
-    turnCount:turnReport.turnNr,
+    turnCount:turn.nr,
     playerKinds:playerKinds,
     aliases:playerHandles,
     winner:($turnPlayer.kind).toLower,
@@ -301,12 +333,10 @@ proc readGameStatsFrom*(path:string) =
     gameStats = fileToSeq(path,GameStats[Alias,int]).mapIt it.toGameStats
 
 proc writeGamestats* =
-  writeSquareVisitsTo visitsFile
-  writeCashedCardsTo cashedFile
+  writeFile(cashedFile,reportedCashedCardsPlusFile(cashedFile).toStr)
+  writeFile(visitsFile,reportedSquareVisitsPlusFile(visitsFile).toStr)
   if players.anyHuman and players.anyComputer:
-    echo "nr of stat games: ",gameStats.len
     gameStats.add newGameStats()
-    echo "nr of stat games: ",gameStats.len
     writeGameStatsTo statsFile
 
 proc resetMatchingStats* =

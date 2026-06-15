@@ -7,7 +7,6 @@ import stat
 import reports
 import sequtils
 import strutils
-import misc
 
 type
   Reveal = enum Front,Back
@@ -406,10 +405,10 @@ proc animateCards:auto =
     lastName = popUpCardName
 let paintCards = animateCards()
 
-proc cashedCards:seq[BlueCard] =
-  result.add selectedBatchColor.reports.mapIt(it.cards.played[Cashed]).flatMap
-  if selectedBatchColor == turnPlayer.color:
-    result.add turnReport.cards.played[Cashed]
+# proc reportedCashedCards(batchColor:PlayerColor):seq[BlueCard] =
+#   result.add batchColor.reports.mapIt(it.cards.played[Cashed]).concat
+  # if batchColor == turnPlayer.color and turnPlayer.cash < cashToWin:
+  #   result.add turnReport.cards.played[Cashed]
 
 template drawSelectedPlayersHand:untyped =
   altPressed and pinnedBatchNr == -1 and turnPlayer.cash >= cashToWin
@@ -435,13 +434,15 @@ proc showCards*(b:var Boxy) =
   elif pinnedCards == Discard or mouseOn discardPileArea:
     cards = blueDeck.discardPile
     header = "Discard pile"
-  elif batchSelected and selectedBatchColor.reports.len > 0:
+  # elif batchSelected and selectedBatchColor.reports.len > 0:
+  elif batchSelected and selectedBatchColor.player.turnNr > 0:
     if drawSelectedPlayersHand:
       cards = players[mouseOnBatchPlayerNr].hand
       color = players[mouseOnBatchPlayerNr].color
       header = $color&" player's hand"
-    else: 
-      cards = cashedCards()
+    else:
+      # cards = selectedBatchColor.reportedCashedCards()
+      cards = selectedBatchColor.reports.mapIt(it.cards.played[Cashed]).concat
       color = players[max(mouseOnBatchPlayerNr,pinnedBatchNr)].color
       header = $color&" player's cashed cards"
   else: 
@@ -454,7 +455,7 @@ proc showCards*(b:var Boxy) =
     b.paintCardsHeader(color,header)
 
 template showFooter:untyped =
-  mouseOnBatchPlayerNr != -1 or 
+  (mouseOnBatchPlayerNr != -1 and selectedBatchColor.player.turnNr > 0) or 
   pinnedBatchNr != -1 or 
   pinnedCards == Discard or 
   mouseOn(discardPileArea) or
