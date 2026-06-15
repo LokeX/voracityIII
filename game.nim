@@ -313,6 +313,7 @@ template player*(playerColor:PlayerColor):untyped =
   for i,player in players:
     if player.color == playerColor:
       idx = i
+      break
   players[idx]
 
 # proc player*(playerColor:PlayerColor):Player =

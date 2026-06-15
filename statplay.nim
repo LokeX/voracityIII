@@ -15,7 +15,7 @@ proc getParams:seq[int] =
     if result.len == 2:
       break
 
-proc setGameSettings:tuple[nrOfGames,nrOfPlayers:int] =
+proc settingsFromParams:tuple[nrOfGames,nrOfPlayers:int] =
   let prms = getParams()
   (result.nrOfGames,result.nrOfPlayers) = (100,6)
   if prms.len == 1:
@@ -43,13 +43,12 @@ const
 
 let
   time = cpuTime()
-  gameSettings = setGameSettings()
+  gameSettings = settingsFromParams()
 
 var
   turnCount = 0
   visitsCounts:Visits
   cashedCards:CountTable[string]
-  verbose = commandLineParams().anyIt it.toLower == "-v"
 
 initGame()
 setNrOfComputerPlayers gameSettings.nrOfPlayers
@@ -61,9 +60,6 @@ for gameNr in 1..gameSettings.nrOfGames:
   startGame()
   while not gameWon:
       aiTakeTurn()
-      if verbose and phase == EndTurn: 
-        finalizeTurnReport()
-        turnReports[^1].dumpTurnReport
   echo "game won : ",turnPlayer.cash," cash, in ",turn.nr," turns"
   if recordStats:
     turnCount += turn.nr

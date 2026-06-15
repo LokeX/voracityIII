@@ -47,10 +47,12 @@ const
   cashedFile = "dat\\cashed.txt"
   statsFile = "dat\\stats.dat"
 
+let
+  verbose* = commandLineParams().anyIt it.toLower == "-v"
+
 var
   gameStats:seq[GameStats[string,PlayerKind]]
   turnReports*:seq[TurnReport]
-  # turnReport*:TurnReport
   playerHandles*:array[6,string]
   recordStats* = true
 
@@ -83,16 +85,12 @@ proc updateTurnReport*[T](item:T,playKind:PlayedKind = Drawn) =
       turnReports[^1].diceRolls.add item
     when typeof(T) is PlayerColor:
       turnReports[^1].kills.add item
-      # killMatrixUpdate()
     when typeof(T) is BlueCard | seq[BlueCard]:
       turnReports[^1].cards.played[playKind].add item
     updateTurnReportBatches()
 
 proc reports*(playerColor:PlayerColor):seq[TurnReport] =
   turnReports.filterIt(it.player.color == playerColor)
-
-# proc reports*(player:Player):seq[TurnReport] =
-#   player.color.reports
 
 proc latestTurnReport*(player:Player):TurnReport =
   for report in turnReports.reversed:
@@ -126,6 +124,9 @@ proc finalizeTurnReport* =
     turnReports[^1].cards.hand = turnPlayer.hand
     turnReports[^1].cash = turnPlayer.cash
     turnReports[^1].pieces = turnPlayer.pieces
+  if verbose:
+    turnReports[^1].dumpTurnReport
+
 
 proc reportedVisitsCount*:Visits =
   for report in turnReports:
@@ -154,21 +155,6 @@ proc toStr*(visitsCounts:Visits):string =
   for square in squares.sorted (a,b) => b.visits - a.visits:
     result.add square.name & ": " & $square.visits & "\n"
 
-# proc toStr*(visitsCounts:Visits):string =
-#   result.add "Square visits:\n"
-#   let squares = (1..60).mapIt (board[it].name,it,visitsCounts[it])
-#   for (name,nr,visits) in squares.sorted (a,b) => b[2] - a[2]:
-#     result.add name & " Nr. " & $nr & ": " & $visits & "\n"
-
-# proc writeSquareVisitsTo(path:string) =
-#   writeFile(path,squareVisitsIncludingFromFile(path).toStr)
-
-# proc writeSquareVisitsTo(path:string) =
-#   var squareVisits:seq[string]
-#   for i,visits in squareVisitsIncludingFromFile(path):
-#     squareVisits.add board[i].name&" Nr."&($i)&": "&($visits)
-#   writeFile(path,squareVisits.join "\n")
-
 proc reportedCashedCards*:CountTable[string] =
   let 
     titles = collect:
@@ -194,24 +180,6 @@ proc toStr*(cashedCards:CashedCards):string =
   result.add "Cashed cards:\n"
   for (title,count) in cashedCards.sorted (a,b) => b.count - a.count:
     result.add title&": "&($count)&"\n"
-
-# proc writeCashedCardsTo(path:string) =
-#   writeFile(path,cashedCardsIncludingFromFile(path).toStr)
-
-# proc writeCashedCardsTo(path:string) =
-#   writeFile(path,
-#     cashedCardsIncludingFromFile(path)
-#     .mapIt(it.title&": "&($it.count))
-#     .join "\n"
-#   )
-
-proc getLoneAlias:string =
-  for i in 0..playerHandles.high:
-    if playerKinds[i] == Human and playerHandles[i].len > 0:
-      if result.len > 0:
-        if result != playerHandles[i]:
-          return ""
-      else: result = playerHandles[i]
 
 proc aliasCounts(aliases:openArray[string]):AliasCounts =
   for i,alias in aliases:
@@ -250,6 +218,14 @@ proc noneMatchingStats:seq[Stats] =
   selectWith stats:
     if not stats.match(kindCounts) or not stats.match(aliasCounts):
       result.add stats
+
+proc getLoneAlias:string =
+  for i in 0..playerHandles.high:
+    if playerKinds[i] == Human and playerHandles[i].len > 0:
+      if result.len > 0:
+        if result != playerHandles[i]:
+          return ""
+      else: result = playerHandles[i]
 
 proc getMatchingStats*:MatchingStats =
   if gameStats.len > 0:
