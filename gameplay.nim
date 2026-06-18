@@ -357,7 +357,6 @@ proc drawDice*(b:var Boxy) =
     inc dieRollFrame
     if turnPlayer.kind == Human and dieRollFrame == maxRollFrames:
       updateTurnReport diceRoll
-      # turnReport.diceRolls.add diceRoll #please: don't do as I do
 
 proc isRollingDice*:bool = dieRollFrame < maxRollFrames
 
@@ -368,8 +367,6 @@ proc startDiceRoll* =
       else: computerRoll
     playSound("wuerfelbecher")
 
-# proc mayReroll*:bool = isDouble() and not isRollingDice()
-
 proc dieUsed*:int =
   if moveSelection.toSquare in moveToSquares(
     moveSelection.fromSquare,diceRoll[1].ord): diceRoll[1].ord
@@ -379,7 +376,7 @@ proc dieUsed*:int =
 
 proc drawCard* =
   drawCardFrom blueDeck
-  playCashPlansTo blueDeck
+  playCashPlans()
   turnPlayer.hand = turnPlayer.sortBlues
 
 proc selectPiece*(square:int) =

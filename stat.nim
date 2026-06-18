@@ -72,8 +72,8 @@ proc initTurnReport* =
     turnReport.turnNr = turnPlayer.turnNr
     turnReport.player.color = turnPlayer.color
     turnReport.player.kind = turnPlayer.kind
-    turnReport.pieces = turnPlayer.pieces
-    turnReport.cash = turnPlayer.cash
+    # turnReport.pieces = turnPlayer.pieces
+    # turnReport.cash = turnPlayer.cash
     turnReports.add turnReport
     updateTurnReportBatches()
 
@@ -97,7 +97,7 @@ proc latestTurnReport*(player:Player):TurnReport =
     if player.color == report.player.color:
       return report
 
-proc dumpTurnReport*(turnReport:TurnReport) =
+proc dumpTurnReport(turnReport:TurnReport) =
   proc moveStr(fromSquare,toSquare,die:int):string =
     "    Die: " & $die &
     ", from: "&board[fromSquare].name&" Nr. " & $board[fromSquare].nr &
@@ -127,7 +127,6 @@ proc finalizeTurnReport* =
   if verbose:
     turnReports[^1].dumpTurnReport
 
-
 proc reportedVisitsCount*:Visits =
   for report in turnReports:
     for move in report.moves:
@@ -138,7 +137,9 @@ proc readVisitsFile(path:string):Visits =
   if fileExists path:
     var square = 1
     for line in lines path:
-      try: result[square] = line.split[^1].parseInt except:discard
+      let lineSplit = line.split ':'
+      try: result[square] = linesplit[^1].strip.parseInt 
+      except:discard
       inc square
 
 proc reportedSquareVisitsPlusFile(path:string):Visits =
@@ -149,7 +150,7 @@ proc reportedSquareVisitsPlusFile(path:string):Visits =
     result[idx] = reportVisits[idx] + fileVisits[idx]
 
 proc toStr*(visitsCounts:Visits):string =
-  result.add "Square visits:\n"
+  # result.add "Square visits:\n"
   let squares:seq[tuple[name:string,visits:int]] = 
     (1..60).mapIt (board[it].name & " Nr. " & $it,visitsCounts[it])
   for square in squares.sorted (a,b) => b.visits - a.visits:
@@ -177,7 +178,7 @@ proc reportedCashedCardsPlusFile(path:string):CashedCards =
   reported.pairs.toSeq
 
 proc toStr*(cashedCards:CashedCards):string =
-  result.add "Cashed cards:\n"
+  # result.add "Cashed cards:\n"
   for (title,count) in cashedCards.sorted (a,b) => b.count - a.count:
     result.add title&": "&($count)&"\n"
 
@@ -309,8 +310,11 @@ proc readGameStatsFrom*(path:string) =
     gameStats = fileToSeq(path,GameStats[Alias,int]).mapIt it.toGameStats
 
 proc writeGamestats* =
-  writeFile(cashedFile,reportedCashedCardsPlusFile(cashedFile).toStr)
-  writeFile(visitsFile,reportedSquareVisitsPlusFile(visitsFile).toStr)
+  let 
+    allCashedCards = reportedCashedCardsPlusFile(cashedFile).toStr
+    allVisits = reportedSquareVisitsPlusFile(visitsFile).toStr
+  writeFile(cashedFile,allCashedCards)
+  writeFile(visitsFile,allVisits)
   if players.anyHuman and players.anyComputer:
     gameStats.add newGameStats()
     writeGameStatsTo statsFile

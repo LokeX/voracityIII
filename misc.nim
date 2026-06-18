@@ -18,14 +18,14 @@ func timeHMS*[T:int or float](secs:T):array[3,int] =
   result = [
     time div 3600,
     remSecs div 60,
-    remsecs mod 60,
+    remSecs mod 60,
   ]
 
 func timeFmt*[T:int or float](secs:T):string =
   let timeUnitVals = timeHMS secs
   for idx,timeUnit in timeUnitVals:
     if timeUnit > 0:
-      result.add $timeUnit
+      result.add if timeUnit == 0: "0" else: $timeUnit
       case idx:
         of 0:result.add "h, "
         of 1:result.add "m and "
@@ -151,11 +151,6 @@ iterator zipem*[T,U](x:openArray[T],y:openArray[U]):(T,U) =
     inc idx
 
 func zipTuple*[T,U](x:(seq[T],seq[U])):seq[(T,U)] = zip(x[0],x[1])
-
-func flatMap*[T](x:seq[seq[T]]):seq[T] =
-  for y in x:
-    for z in y:
-      result.add z
 
 when isMainModule:
   var 

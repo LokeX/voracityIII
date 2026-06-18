@@ -234,7 +234,6 @@ proc setVolume*(key:KeyboardEvent) =
     elif vol <= 0.05: 0 else: -0.05
   )
   setVolume vol
-  removeImg("volume")
   addImage("volume",paintVolume())
   showVolume = showVolTime
 

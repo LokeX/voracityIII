@@ -78,10 +78,10 @@ template updatePiecesPainter =
   if updatePieces != nil:
     updatePieces()
 
-proc playCashPlansTo*(deck:var Deck) =
+proc playCashPlans* =
   let
     initialCash = turnPlayer.cash
-    cashedPlans = turnPlayer.cashInPlansTo deck
+    cashedPlans = turnPlayer.cashInPlansTo bluedeck
   if cashedPlans.len > 0:
     if turnPlayer.kind == Human:
       turnPlayer.hand = turnPlayer.sortBlues
@@ -90,16 +90,18 @@ proc playCashPlansTo*(deck:var Deck) =
     playSound "coins-to-table-2"
     if initialCash < cashToWin and turnPlayer.cash >= cashToWin:
       finalizeTurnReport()
-      # recordTurnReport()
       setConfigStateTo GameWon
       gameWon = true
     else:
       undrawnBluesUpdate()
-      turn.undrawnBlues += cashedPlans.mapIt(
-        if it.squares.required.len == 1: 2
-        elif it.squares.required.len < 4: 1
-        else: 1
-      ).sum
+      turn.undrawnBlues += 
+        cashedPlans.mapIt(
+          case it.cardKind
+          of Deed:2
+          of Plan:2
+          of Job:1
+          else:0
+        ).sum
 
 proc playNews =
   let news = turnPlayer.hand[^1]
@@ -109,7 +111,7 @@ proc playNews =
   if news.moveSquares[1] == 0: playSound "electricity"
   else: playSound "driveBy"
   updatePiecesPainter()
-  playCashPlansTo blueDeck
+  playCashPlans()
 
 proc playEvent()
 proc playDejaVue =
@@ -167,7 +169,7 @@ proc playEvent =
       if blueDeck.discardPile.len > 1:
         playDejaVue()
     else: event.barMove
-  playCashPlansTo blueDeck
+  playCashPlans()
 
 proc drawCardFrom*(deck:var Deck) =
   turnPlayer.hand.drawFrom deck
@@ -191,7 +193,7 @@ proc move =
   turnPlayer.pieces[selectedMove.pieceNr] = selectedMove.toSquare
   if selectedMove.fromSquare == 0:
     turnPlayer.cash -= piecePrice
-  playCashPlansTo blueDeck
+  playCashPlans()
   if turnPlayer.kind == Human: 
     turnPlayer.hand = turnPlayer.sortBlues
   turnPlayer.update = true
@@ -268,7 +270,7 @@ proc nextTurn =
   initTurnReport()
   if anyHuman players:
     showMenu false
-  playCashPlansTo blueDeck
+  playCashPlans()
 
 proc nextGameState* =
   if turnPlayer.cash >= cashToWin:
@@ -296,7 +298,7 @@ proc aiStartTurn =
 proc aiDraw =
   while turn.undrawnBlues > 0:
     drawCardFrom blueDeck
-    playCashPlansTo blueDeck
+    playCashPlans()
     hypo = turnPlayer.hypotheticalInit
   phase = Reroll
 
@@ -324,6 +326,7 @@ proc aiMove =
     selectedMove = hypo.bestMove(diceMoves,diceRoll)
     if selectedMove.pieceNr > -1: 
       movePiece()
+    else: echo $turnPlayer.color," skips turn"
   else: echo $turnPlayer.color&" has no pieces to move"
   phase = PostMove
 

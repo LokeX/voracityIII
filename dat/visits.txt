@@ -1,60 +1,60 @@
-Bar Nr.1: 3
-Gas Station Nr.2: 0
-Bank Nr.3: 0
-Town Hall Nr.4: 6
-Highway Nr.5: 3
-Barracks Nr.6: 7
-Church Nr.7: 6
-Villa Nr.8: 6
-Embassey Nr.9: 3
-Courthouse Nr.10: 9
-Airport Nr.11: 6
-Casino Nr.12: 6
-Jeweler Nr.13: 5
-Bank Nr.14: 2
-Gas Station Nr.15: 0
-Bar Nr.16: 9
-Highway Nr.17: 4
-Bar Nr.18: 3
-Disco Nr.19: 4
-Bar Nr.20: 8
-Brothel Nr.21: 8
-Realestate Nr.22: 4
-Shop Nr.23: 0
-Bank Nr.24: 1
-Hospital Nr.25: 5
-Undertaker Nr.26: 5
-Gas Station Nr.27: 1
-Bar Nr.28: 5
-Highway Nr.29: 1
-McLeans Nr.30: 17
-Condo Nr.31: 5
-Condo Nr.32: 1
-Lawyers Nr.33: 8
-Shop Nr.34: 1
-Bar Nr.35: 8
-Prison Nr.36: 5
-Gas Station Nr.37: 0
-Bank Nr.38: 0
-Debt Inc Nr.39: 9
-Bar Nr.40: 13
-Highway Nr.41: 5
-Shop Nr.42: 1
-Entreprenour Nr.43: 3
-Shop Nr.44: 0
-Pharmacy Nr.45: 7
-Bar Nr.46: 2
-Gas Station Nr.47: 0
-Brewery Nr.48: 5
-Harbour Nr.49: 2
-Shop Nr.50: 0
-Bar Nr.51: 7
-Bank Nr.52: 2
-Highway Nr.53: 0
-Bar Nr.54: 5
-Import inc Nr.55: 1
-Slum Nr.56: 3
-Alley Nr.57: 6
-Slum Nr.58: 0
-Slum Nr.59: 1
-Police Nr.60: 1
+Town Hall Nr. 4: 10
+Barracks Nr. 6: 9
+Bar Nr. 1: 8
+McLeans Nr. 30: 8
+Gas Station Nr. 2: 7
+Highway Nr. 5: 7
+Church Nr. 7: 7
+Airport Nr. 11: 7
+Bank Nr. 3: 6
+Embassey Nr. 9: 6
+Brothel Nr. 21: 6
+Hospital Nr. 25: 6
+Villa Nr. 8: 5
+Casino Nr. 12: 5
+Gas Station Nr. 15: 5
+Bar Nr. 16: 5
+Bar Nr. 40: 5
+Bank Nr. 14: 4
+Disco Nr. 19: 4
+Bar Nr. 20: 4
+Bar Nr. 35: 4
+Brewery Nr. 48: 4
+Courthouse Nr. 10: 3
+Jeweler Nr. 13: 3
+Highway Nr. 17: 3
+Bar Nr. 18: 3
+Realestate Nr. 22: 3
+Undertaker Nr. 26: 3
+Highway Nr. 41: 3
+Pharmacy Nr. 45: 3
+Bar Nr. 51: 3
+Shop Nr. 23: 2
+Bank Nr. 24: 2
+Gas Station Nr. 27: 2
+Bar Nr. 28: 2
+Shop Nr. 34: 2
+Bank Nr. 38: 2
+Entreprenour Nr. 43: 2
+Import inc Nr. 55: 2
+Alley Nr. 57: 2
+Highway Nr. 29: 1
+Condo Nr. 31: 1
+Condo Nr. 32: 1
+Lawyers Nr. 33: 1
+Prison Nr. 36: 1
+Gas Station Nr. 37: 1
+Debt Inc Nr. 39: 1
+Shop Nr. 42: 1
+Shop Nr. 44: 1
+Harbour Nr. 49: 1
+Bank Nr. 52: 1
+Bar Nr. 54: 1
+Slum Nr. 58: 1
+Bar Nr. 46: 0
+Gas Station Nr. 47: 0
+Shop Nr. 50: 0
+Highway Nr. 53: 0
+Slum Nr. 56: 0
+Slum Nr. 59: 0
+Police Nr. 60: 0

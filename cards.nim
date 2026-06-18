@@ -405,11 +405,6 @@ proc animateCards:auto =
     lastName = popUpCardName
 let paintCards = animateCards()
 
-# proc reportedCashedCards(batchColor:PlayerColor):seq[BlueCard] =
-#   result.add batchColor.reports.mapIt(it.cards.played[Cashed]).concat
-  # if batchColor == turnPlayer.color and turnPlayer.cash < cashToWin:
-  #   result.add turnReport.cards.played[Cashed]
-
 template drawSelectedPlayersHand:untyped =
   altPressed and pinnedBatchNr == -1 and turnPlayer.cash >= cashToWin
 
@@ -434,14 +429,12 @@ proc showCards*(b:var Boxy) =
   elif pinnedCards == Discard or mouseOn discardPileArea:
     cards = blueDeck.discardPile
     header = "Discard pile"
-  # elif batchSelected and selectedBatchColor.reports.len > 0:
   elif batchSelected and selectedBatchColor.player.turnNr > 0:
     if drawSelectedPlayersHand:
       cards = players[mouseOnBatchPlayerNr].hand
       color = players[mouseOnBatchPlayerNr].color
       header = $color&" player's hand"
     else:
-      # cards = selectedBatchColor.reportedCashedCards()
       cards = selectedBatchColor.reports.mapIt(it.cards.played[Cashed]).concat
       color = players[max(mouseOnBatchPlayerNr,pinnedBatchNr)].color
       header = $color&" player's cashed cards"

@@ -49,6 +49,6 @@ echo leap
 import eval
 
 let
-  pieces = @[28,39,46,56,8]
+  pieces = @[29,41,26,54,8]
 
-echo pieces.nrOfCovers @[11]
+echo pieces.nrOfCovers @[4,10,33]

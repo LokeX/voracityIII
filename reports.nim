@@ -5,7 +5,6 @@ import strutils
 import game
 import menu
 import misc
-# import play
 import stat
 import gameplay
 
@@ -101,17 +100,6 @@ proc mouseOnPlayerBatchNr*: int =
   for i, _ in players:
     if mouseOn playerBatches[i]: return i
 
-proc handleInput*(key:KeyboardEvent) = 
-  if key.button != KeyEnter: key.batchKeyb inputBatch
-  else:
-    if inputBatch.input.len > 0:
-      playerKinds[batchInputNr] = Human
-      players[batchInputNr].kind = Human
-    playerHandles[batchInputNr] = inputBatch.input
-    players[batchInputNr].update = true
-    batchInputNr = -1
-    inputBatch.deleteInput
-
 proc playerBatch(setup:BatchSetup,yPos:int):Batch =
   newBatch BatchInit(
     kind: TextBatch,
@@ -179,8 +167,6 @@ proc victims(killer:PlayerColor):seq[PlayerColor] =
   for report in turnReports:
     if report.player.color == killer:
       result.add report.kills
-  # if killer == turnPlayer.color:
-  #   result.add turnReport.kills
 
 proc killMatrix:KillMatrix =
   for killer in PlayerColor:
@@ -292,14 +278,6 @@ proc finalReportText(report:TurnReport):seq[string] = @[
   "Press and hold alt-key to view players hand"
 ]
 
-# proc latestTurnReport(player:Player):TurnReport =
-#   # if player.color == turnPlayer.color: 
-#   #   return turnReport 
-#   # else:
-#   for report in turnReports.reversed:
-#     if player.color == report.player.color:
-#       return report
-
 iterator finalReports:(PlayerColor,seq[string]) =
   for player in players:
     let turnReport = player.latestTurnReport
@@ -326,9 +304,6 @@ proc resetReports* =
 
 template gotReport*(player:PlayerColor):untyped =
   reportBatches[player].spansLength > 0
-
-# proc reports*(playerColor:PlayerColor):seq[TurnReport] =
-#   turnReports.filterIt(it.player.color == playerColor)
 
 proc drawReport*(b:var Boxy,playerColor:PlayerColor) =
   if selectedBatch == -1 or playerColor != PlayerColor(selectedBatch):
@@ -429,8 +404,6 @@ proc handlePlayerBatch*(m:KeyEvent) =
     inputBatch.deleteInput
 
 proc reportAnimationMoves*:seq[AnimationMove] =
-  # if selectedBatchColor == turnPlayer.color:
-  #   result.add turnReport.moves.mapIt (it.fromSquare,it.toSquare)
   if selectedBatchColor.reports.len > 0: 
     result.add selectedBatchColor
     .reports[^1].moves
@@ -441,8 +414,24 @@ proc handleReportMovesAnimations* =
     if (let moves = reportAnimationMoves(); moves.len > 0):
         startMovesAnimations(mouseOnBatchColor,moves)
 
+proc handleInput*(key:KeyboardEvent) = 
+  if key.button != KeyEnter: key.batchKeyb inputBatch
+  else:
+    if inputBatch.input.len > 0:
+      playerKinds[batchInputNr] = Human
+      players[batchInputNr].kind = Human
+    playerHandles[batchInputNr] = inputBatch.input
+    players[batchInputNr].update = true
+    batchInputNr = -1
+    inputBatch.deleteInput
+
+proc handleBatchInput*(key:KeyboardEvent) = 
+  if batchInputNr != -1:
+    key.handleInput
+    if key.button == KeyEnter:
+      updateStatsBatch()
+
 template initReports* =
   playerBatches = newPlayerBatches()
   reportBatches = initReportBatches()
-  # readGameStatsFrom statsFile
   updateStatsBatch()

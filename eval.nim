@@ -26,16 +26,12 @@ func legalPieces*(hypothetical:Hypothetic):seq[int] =
       result.add square
 
 func without(pieces:openArray[int],removePiece:int):seq[int] =
-  # debugecho pieces
-  # debugEcho removePiece
   for idx,piece in pieces:
     if piece == removePiece:
       if idx < pieces.high:
         result.add pieces[idx+1..pieces.high]
       return
     else: result.add piece
-  # debugEcho result
-  # debugEcho ""
  
 func covers(pieceSquare,coverSquare:int):bool =
   if pieceSquare == coverSquare:
@@ -73,20 +69,18 @@ func nrOfcovers(pieces,squares:seq[int],maxDepth,depth:int):int =
 template nrOfcovers*(pieces,squares:untyped):untyped = 
   pieces.nrOfcovers(squares,squares.len,0)
 
-func coversAll(pieces,squares:seq[int]):bool = 
+func coverAll(pieces,squares:seq[int]):bool = 
   let coverPieces = pieces.filterIt it.covers squares[0]
   if coverPieces.len == 0: 
     false
   elif squares.len == 1: 
     true
   else: coverPieces.anyIt(
-    pieces.without(it).coversAll(squares[1..squares.high])
+    pieces.without(it).coverAll(squares[1..squares.high])
   )
 
 template cover(pieces,squares:untyped):untyped = 
-  if pieces.len < squares.len:
-    false
-  else: pieces.coversAll squares
+  if pieces.len < squares.len: false else: pieces.coverAll squares
 
 func coverOneInMany(coverPieces,squares:seq[int],requiredSquare:int):bool = 
   var pieces = coverPieces
@@ -238,11 +232,13 @@ func ownKill(hypothetical:Hypothetic,pieceNr,toSquare:int):tuple[eval,killEval:i
 
 template ownkillBest*(hypothetical,move:untyped):untyped =
   let ownKill = hypothetical.ownKill(move.pieceNr,move.toSquare)
+  # debugEcho "ownkill: ",ownKill.killEval > ownKill.eval
   ownKill.killEval > ownKill.eval
 
 func evalMove(hypothetical:Hypothetic,pieceNr,toSquare:int):int =
   var hypo = hypothetical 
   if toSquare in hypothetical.ownKillSquares:
+    # debugEcho "ownKill pieceNr:: ",pieceNr,", toSquare: ",toSquare
     let (eval,killEval) = hypothetical.ownkill(pieceNr,toSquare)
     if eval >= killEval: eval else: killEval
   else: 
@@ -257,6 +253,9 @@ func moves(hypothetical:Hypothetic,dice:openArray[int]):seq[Move] =
           result.add (pieceNr,die,fromSquare,toSquare,0)
 
 func bestMoveIn(hypothetical:Hypothetic,moves:seq[Move]):Move = 
+  if moves.len == 0:
+    result.pieceNr = -1
+    return
   var bestEval,eval,bestIndex:int
   for idx,move in moves:
     eval = hypothetical.evalMove(move.pieceNr,move.toSquare)
@@ -313,8 +312,6 @@ func bestMove*(hypothetical:Hypothetic,diceMoves:DiceMoves,dice:Dice):Move =
         winningMove = hypothetical.winningMoveIn moves
       if winningMove.pieceNr > -1: (true,winningMove)
       else: (false,hypothetical.bestMoveIn moves)
-  if not isWinningMove and hypothetical.evalPos >= result.eval:
-    result.pieceNr = -1
 
 proc aiShouldReroll*(hypothetical:Hypothetic,diceMoves:var DiceMoves,dice:Dice):bool =
   if dice[1] == dice[2]:
@@ -350,7 +347,8 @@ proc ownKillSquares(player:Player):seq[int] =
   result = player.pieces.filterIt(
     canKillPieceOn(it) and
     player.pieces.count(it) == 1 and
-    not player.requiredPiecesOn(it) > 1
+    player.requiredPiecesOn(it) <= 1 and
+    player.pieces.without(it).any piece => piece.covers it
   )
   if result.len > 0:
     let otherPieces = toSeq(players.piecesInColorsOtherThan player.color)
@@ -376,15 +374,24 @@ func evalBlues(hypothetical:Hypothetic):seq[BlueCard] =
     )
   result.sort (a,b) => b.eval - a.eval
 
+func coverOneInMany(pieces:seq[int],card:BlueCard,requiredCovered:bool):bool =
+  var pieces = pieces
+  if requiredCovered:
+    if (let idx = pieces.find card.squares.required[0]; idx > -1): pieces.del idx
+    else: 
+      let covers = pieces.filterIt it.covers card.squares.required[0]
+      if covers.len == 1: pieces.del pieces.find covers[0]
+  pieces.any piece => card.squares.oneInMany.anyIt piece.covers it
+
 func coversDif(pieces:seq[int],card:BlueCard):int =
   var 
-    coversRequired = card.squares.required.len
-    covers = pieces.nrOfcovers card.squares.required
+    nrOfCoversRequired = card.squares.required.len
+    requiredCovers = pieces.nrOfcovers card.squares.required
   if card.squares.oneInMany.len > 0: 
-    inc coversRequired
-    if pieces.coverOneInMany(card.squares.oneInMany,card.squares.required[0]):
-      inc covers
-  covers-coversRequired
+    inc nrOfCoversRequired
+    if pieces.coverOneInMany(card,requiredCovers > 0):
+      inc requiredCovers
+  requiredCovers-nrOfCoversRequired
 
 func squareBase(cards:seq[BlueCard]):seq[int] =
   for card in cards:
@@ -399,36 +406,35 @@ func squareBase(covered,uncovered:seq[BlueCard]):seq[int] =
     if coveredBase.anyIt it in result: result = coveredBase 
 
 proc sortBlues*(player:Player):seq[BlueCard] =
-  if player.hand.len <= 3: return player.hand
+  if player.hand.len <= 3: 
+    return player.hand
   var 
     uncovered:seq[tuple[card:BlueCard,value:int]]
     hypo:Hypothetic
-    coversDif:int
   hypo.pieces = player.pieces
   hypo.cash = player.cash
   let legalPieces = hypo.legalPieces
   for card in player.hand:
-    coversDif = legalPieces.coversDif card
-    if coversDif > -1: 
-      hypo.cards.add card
+    let coversDif = legalPieces.coversDif card
+    if coversDif > -1: hypo.cards.add card
     else: uncovered.add (card,coversDif)
   if hypo.cards.len > 3: 
     hypo.board = hypo.baseEvalBoard
     result.add hypo.evalBlues
   elif hypo.cards.len > 0: result.add hypo.cards
-  if not statGame: echo "sort hypo.cards: ",result
+  if not statGame: debugEcho "sort hypo.cards: ",result
+  # debugEcho "sort hypo.cards: ",result
   if hypo.cards.len < 3 and uncovered.len > 1:
-    # let squareBase = 
-    #   if hypo.cards.len == 0: uncovered.mapIt(it.card).squareBase
-    #   else: hypo.cards.squareBase
     let squareBase = squareBase(hypo.cards,uncovered.mapIt it.card)
     if not statGame: debugEcho "sort squareBase: ",squareBase
+    # debugEcho "sort squareBase: ",squareBase
     for (card,value) in uncovered.mItems:
       value += card.squares.required.deduplicate.mapIt(squareBase.count it).sum
       if card.squares.oneInMany.len > 0:
         value += squareBase.count card.squares.oneInMany[0]
     uncovered.sort (a,b) => b.value-a.value
     if not statGame: debugEcho "sort uncovered: ",uncovered
+    # debugEcho "sort uncovered: ",uncovered
   result.add uncovered.mapIt it.card
 
 proc eventMovesEval*(player:Player,event:BlueCard):seq[Move] =
