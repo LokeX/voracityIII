@@ -6,7 +6,6 @@ import sequtils
 import sugar
 
 const
-  highwayVal = 12000
   valBar = 15000
   posPercent = [1.0,0.3,0.3,0.3,0.3,0.3,0.3,0.15,0.14,0.12,0.10,0.08,0.05]
 
@@ -49,7 +48,6 @@ func nrOfcovers(pieces,squares:seq[int],maxDepth,depth:int):int =
     if coverPieces.len > 0: 
       idx = i+1
       break
-  # debugEcho coverPieces
   if coverPieces.len == 0: 
     depth
   elif idx == squares.len:
@@ -199,9 +197,9 @@ func evalPos(hypothetical:Hypothetic):int =
     hypo.cards = hypothetical.cards.filterIt legalPieces.cover it
   evals.add ordSquares.mapIt hypo.evalSquare it
   if ordSquares.len < legalPieces.len:
-    gasstationEvals = gasStations.mapIt hypo.evalSquare it
+    gasstationEvals = gasStations.mapIt int(float(hypo.evalSquare(it)) * 0.5)
     if removedCount > 0: 
-      highwayEvals = highways.mapIt hypo.evalSquare it
+      highwayEvals = highways.mapIt int(float(hypo.evalSquare(it)) * 0.5)
   for highwaySquare in highwaySquares:
     let 
       highwayIdx = if highwayEvals.len > 0: highways.find highwaySquare else: -1
@@ -232,13 +230,11 @@ func ownKill(hypothetical:Hypothetic,pieceNr,toSquare:int):tuple[eval,killEval:i
 
 template ownkillBest*(hypothetical,move:untyped):untyped =
   let ownKill = hypothetical.ownKill(move.pieceNr,move.toSquare)
-  # debugEcho "ownkill: ",ownKill.killEval > ownKill.eval
   ownKill.killEval > ownKill.eval
 
 func evalMove(hypothetical:Hypothetic,pieceNr,toSquare:int):int =
   var hypo = hypothetical 
   if toSquare in hypothetical.ownKillSquares:
-    # debugEcho "ownKill pieceNr:: ",pieceNr,", toSquare: ",toSquare
     let (eval,killEval) = hypothetical.ownkill(pieceNr,toSquare)
     if eval >= killEval: eval else: killEval
   else: 
@@ -286,7 +282,7 @@ func allDiceMoves*(hypothetical:Hypothetic):DiceMoves =
       result[die].isWinningMove = true
     else:result[die].bestMove = hypothetical.bestMoveIn result[die].moves
 
-func isBestDieIn*(dieQuery:DieFace,diceMoves:DiceMoves):bool =
+func isBestDieIn(dieQuery:DieFace,diceMoves:DiceMoves):bool =
   if diceMoves[dieQuery].isWinningMove: 
     true
   elif diceMoves.anyIt it.isWinningMove: 
@@ -299,19 +295,17 @@ func isBestDieIn*(dieQuery:DieFace,diceMoves:DiceMoves):bool =
     dieQuery == bestDie
 
 func bestMove*(hypothetical:Hypothetic,diceMoves:DiceMoves,dice:Dice):Move =
-  var isWinningMove:bool
-  (isWinningMove,result) = 
-    if diceMoves[^1].moves.len > 0: 
-      let bestDie = 
-        if diceMoves[dice[1]].bestMove.eval >= diceMoves[dice[2]].bestMove.eval or 
-        diceMoves[dice[1]].isWinningMove: 1 else: 2
-      (diceMoves[dice[bestDie]].isWinningMove,diceMoves[dice[bestDie]].bestMove)
-    else: 
-      let
-        moves = hypothetical.moves [dice[1].ord,dice[2].ord]
-        winningMove = hypothetical.winningMoveIn moves
-      if winningMove.pieceNr > -1: (true,winningMove)
-      else: (false,hypothetical.bestMoveIn moves)
+  if diceMoves[^1].moves.len > 0: 
+    let bestDie = 
+      if diceMoves[dice[1]].bestMove.eval >= diceMoves[dice[2]].bestMove.eval or 
+      diceMoves[dice[1]].isWinningMove: 1 else: 2
+    diceMoves[dice[bestDie]].bestMove
+  else: 
+    let
+      moves = hypothetical.moves [dice[1].ord,dice[2].ord]
+      winningMove = hypothetical.winningMoveIn moves
+    if winningMove.pieceNr > -1: winningMove
+    else: hypothetical.bestMoveIn moves
 
 proc aiShouldReroll*(hypothetical:Hypothetic,diceMoves:var DiceMoves,dice:Dice):bool =
   if dice[1] == dice[2]:
@@ -327,9 +321,6 @@ func barVal(hypothetical:Hypothetic):int =
   valBar-(3000*hypothetical.pieces.countIt(it.isBar))+cardVal
 
 func baseEvalBoard(hypothetical:Hypothetic):EvalBoard =
-  result[0] = 24000
-  for highway in highways: 
-    result[highway] = highwayVal
   let barVal = hypothetical.barVal
   for bar in bars: 
     result[bar] = barVal
@@ -422,19 +413,13 @@ proc sortBlues*(player:Player):seq[BlueCard] =
     hypo.board = hypo.baseEvalBoard
     result.add hypo.evalBlues
   elif hypo.cards.len > 0: result.add hypo.cards
-  if not statGame: debugEcho "sort hypo.cards: ",result
-  # debugEcho "sort hypo.cards: ",result
   if hypo.cards.len < 3 and uncovered.len > 1:
     let squareBase = squareBase(hypo.cards,uncovered.mapIt it.card)
-    if not statGame: debugEcho "sort squareBase: ",squareBase
-    # debugEcho "sort squareBase: ",squareBase
     for (card,value) in uncovered.mItems:
       value += card.squares.required.deduplicate.mapIt(squareBase.count it).sum
       if card.squares.oneInMany.len > 0:
         value += squareBase.count card.squares.oneInMany[0]
     uncovered.sort (a,b) => b.value-a.value
-    if not statGame: debugEcho "sort uncovered: ",uncovered
-    # debugEcho "sort uncovered: ",uncovered
   result.add uncovered.mapIt it.card
 
 proc eventMovesEval*(player:Player,event:BlueCard):seq[Move] =

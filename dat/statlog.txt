@@ -1,172 +1,172 @@
-Polterabend: 6488
-Moonshine: 5672
-Protection: 4945
-Loads of stuff: 4688
-Chicks in cages: 4203
-Bouncing: 4160
-Rock solid claims: 3987
-Containment: 3879
-Advisory board: 3869
-High society: 3792
-Knock knock: 3758
-Legalese: 3719
-Trance: 3556
-Human resources: 3544
-Knocked out: 3401
-Up yours: 3325
-Redemption: 3305
-Usery: 3292
-Foreign aid: 3236
-Cold meds: 3176
-Grapevine: 3169
-Bail: 3162
-Faulty towers: 3161
-Homebrew: 3088
-Occupational hazard: 3034
-Outstanding: 3016
-Drugdealer: 3005
-Lawfare: 3002
-Financing: 2986
-Hooked: 2975
-Debt to society: 2932
-Acquittal: 2886
-Flay'em: 2875
-Et spiritus sancti: 2874
-Lucky bastard: 2866
-Burial at sea: 2812
-Sing a long song: 2786
-Rentseeking: 2773
-Grand designs: 2770
-Express demands: 2768
-Nose job: 2760
-Outsider: 2755
-Demolition: 2728
-Broken bones: 2706
-Borderless: 2690
-Brotherhood: 2688
-Bootlegging: 2684
-Hooters: 2683
-Pimp: 2665
-Higher powers: 2580
-Home invasion: 2558
-Stiffs: 2558
-Diamonds are...: 2537
-Secret weapon: 2536
-Deadly cargo: 2521
-Side effects: 2521
-Ludomania: 2469
-Color revolution: 2459
-Agent: 2446
-Duty free: 2442
-Concuctions: 2440
-Projects: 2436
-Prescriptions: 2418
-Choireboys: 2413
-Rentals: 2347
-Small arms: 2316
-Laundry: 2280
-Insurgency: 2274
-Golden chains: 2240
-Globalist: 2217
-Razia: 2203
-Financier: 2197
-Lipstick on a pig: 2148
-Blood suckers: 2140
-Slumlord: 2139
-Stove away: 2130
-Underhanded: 2124
-VIP Lounge: 2102
-Open house: 2055
-Deadweight: 2042
-Gangbangers: 2025
-Trans-action: 1974
-Circle jerk: 1945
-Safe bet: 1874
-Recycling: 1864
-Blood diamants: 1850
-Ramtheft: 1771
-Lord of War: 1762
-Transitions: 1734
-Healthplan: 1715
-Meat grinder: 1667
-Specimens: 1647
-Infiltration: 1610
-Terrorism: 1581
-Bodycount: 1554
-Bodyguard: 1521
-Judicial murder: 1484
-Mayor: 1425
-Sweethearts: 1393
-Aiding and abetting: 1266
-White collars: 1210
-Coup: 1157
-Addictions: 1138
-Informer: 1127
-Broman escorte: 1065
-Spy: 1007
-Heartless: 979
-Corruption: 794
-McLeans Nr. 30: 62011
-Brothel Nr. 21: 52553
-Bar Nr. 16: 48411
-Bar Nr. 40: 43089
-Town Hall Nr. 4: 40166
-Lawyers Nr. 33: 38675
-Barracks Nr. 6: 37686
-Pharmacy Nr. 45: 34332
-Brewery Nr. 48: 33389
-Harbour Nr. 49: 33119
-Bar Nr. 51: 32403
-Debt Inc Nr. 39: 32218
-Disco Nr. 19: 31347
-Courthouse Nr. 10: 30619
-Airport Nr. 11: 30574
-Church Nr. 7: 30161
-Villa Nr. 8: 28596
-Bar Nr. 35: 27150
-Alley Nr. 57: 26635
-Embassey Nr. 9: 24361
-Bar Nr. 20: 24234
-Hospital Nr. 25: 23864
-Highway Nr. 41: 23244
-Entreprenour Nr. 43: 22808
-Undertaker Nr. 26: 22650
-Prison Nr. 36: 21953
-Highway Nr. 5: 20737
-Police Nr. 60: 20375
-Import inc Nr. 55: 19003
-Jeweler Nr. 13: 18572
-Realestate Nr. 22: 18384
-Bar Nr. 46: 18054
-Highway Nr. 53: 16717
-Casino Nr. 12: 16359
-Highway Nr. 17: 15839
-Bar Nr. 28: 14477
-Highway Nr. 29: 14259
-Bar Nr. 54: 12876
-Bar Nr. 18: 12418
-Condo Nr. 31: 11162
-Condo Nr. 32: 8957
-Bar Nr. 1: 8641
-Slum Nr. 56: 8425
-Shop Nr. 42: 7185
-Bank Nr. 14: 6636
-Bank Nr. 3: 6547
-Slum Nr. 58: 6174
-Slum Nr. 59: 5410
-Shop Nr. 44: 5147
-Bank Nr. 24: 5030
-Gas Station Nr. 15: 4981
-Shop Nr. 34: 4467
-Shop Nr. 23: 4372
-Shop Nr. 50: 4177
-Bank Nr. 52: 4177
-Bank Nr. 38: 4095
-Gas Station Nr. 27: 3087
-Gas Station Nr. 2: 1223
-Gas Station Nr. 37: 1035
-Gas Station Nr. 47: 744
-Time: 39m and 13s
+Polterabend: 7154
+Moonshine: 6450
+Protection: 5439
+Loads of stuff: 5153
+Rock solid claims: 4239
+Bouncing: 4229
+Containment: 4185
+Chicks in cages: 4051
+Legalese: 3902
+Up yours: 3825
+Knock knock: 3803
+Cold meds: 3776
+Outsider: 3698
+Financing: 3642
+Advisory board: 3629
+Usery: 3620
+Lucky bastard: 3594
+High society: 3579
+Bail: 3528
+Foreign aid: 3511
+Trance: 3492
+Sing a long song: 3472
+Human resources: 3442
+Outstanding: 3284
+Flay'em: 3262
+Homebrew: 3246
+Faulty towers: 3239
+Knocked out: 3212
+Grapevine: 3182
+Demolition: 3135
+Home invasion: 3134
+Debt to society: 3083
+Et spiritus sancti: 3061
+Acquittal: 2998
+Laundry: 2983
+Broken bones: 2958
+Redemption: 2925
+Duty free: 2901
+Hooked: 2874
+Occupational hazard: 2857
+Ludomania: 2828
+Burial at sea: 2822
+Hooters: 2796
+Lawfare: 2795
+Stiffs: 2783
+Blood suckers: 2780
+Grand designs: 2760
+Diamonds are...: 2720
+Brotherhood: 2703
+Rentseeking: 2675
+Razia: 2672
+Nose job: 2649
+Borderless: 2647
+Drugdealer: 2620
+Rentals: 2553
+Higher powers: 2552
+Deadly cargo: 2544
+Concuctions: 2535
+Express demands: 2533
+Secret weapon: 2526
+Bootlegging: 2525
+Agent: 2520
+Golden chains: 2503
+Underhanded: 2499
+Choireboys: 2452
+Projects: 2419
+Pimp: 2412
+Side effects: 2364
+Small arms: 2360
+Prescriptions: 2334
+Deadweight: 2311
+Ramtheft: 2300
+Slumlord: 2239
+Lipstick on a pig: 2219
+Safe bet: 2192
+Stove away: 2191
+VIP Lounge: 2136
+Color revolution: 2118
+Open house: 2094
+Specimens: 2094
+Recycling: 2042
+Transitions: 2011
+Insurgency: 1987
+Circle jerk: 1964
+Gangbangers: 1963
+Globalist: 1936
+Financier: 1911
+Blood diamants: 1911
+Healthplan: 1902
+Infiltration: 1796
+Bodyguard: 1757
+Bodycount: 1724
+Trans-action: 1712
+Sweethearts: 1567
+Meat grinder: 1533
+Lord of War: 1479
+Mayor: 1478
+Judicial murder: 1471
+Terrorism: 1461
+Aiding and abetting: 1384
+White collars: 1335
+Addictions: 1305
+Broman escorte: 1262
+Informer: 1239
+Coup: 1060
+Heartless: 1055
+Spy: 988
+Corruption: 744
+McLeans Nr. 30: 61006
+Bar Nr. 16: 52690
+Brothel Nr. 21: 49160
+Bar Nr. 35: 42412
+Town Hall Nr. 4: 37720
+Lawyers Nr. 33: 36705
+Barracks Nr. 6: 35513
+Bar Nr. 40: 34883
+Brewery Nr. 48: 33074
+Pharmacy Nr. 45: 32794
+Harbour Nr. 49: 31839
+Debt Inc Nr. 39: 31307
+Courthouse Nr. 10: 30659
+Bar Nr. 46: 30166
+Church Nr. 7: 28373
+Disco Nr. 19: 28230
+Bar Nr. 51: 27981
+Airport Nr. 11: 27900
+Villa Nr. 8: 27012
+Bar Nr. 20: 25219
+Alley Nr. 57: 24157
+Prison Nr. 36: 24110
+Hospital Nr. 25: 23705
+Undertaker Nr. 26: 22823
+Embassey Nr. 9: 22620
+Entreprenour Nr. 43: 21963
+Police Nr. 60: 20866
+Highway Nr. 5: 18408
+Highway Nr. 41: 18361
+Bar Nr. 28: 18339
+Jeweler Nr. 13: 18278
+Realestate Nr. 22: 18013
+Bar Nr. 18: 16955
+Import inc Nr. 55: 16708
+Casino Nr. 12: 16597
+Bar Nr. 54: 15968
+Highway Nr. 53: 14060
+Highway Nr. 17: 13619
+Highway Nr. 29: 13398
+Condo Nr. 31: 10972
+Bar Nr. 1: 9841
+Condo Nr. 32: 9499
+Shop Nr. 42: 8670
+Slum Nr. 56: 8520
+Bank Nr. 3: 8407
+Bank Nr. 14: 7588
+Slum Nr. 58: 6496
+Gas Station Nr. 15: 5987
+Shop Nr. 44: 5877
+Slum Nr. 59: 5585
+Bank Nr. 38: 5372
+Bank Nr. 24: 5157
+Bank Nr. 52: 5048
+Shop Nr. 34: 4899
+Shop Nr. 50: 4887
+Shop Nr. 23: 4366
+Gas Station Nr. 27: 3414
+Gas Station Nr. 2: 1453
+Gas Station Nr. 37: 1299
+Gas Station Nr. 47: 1028
+Time: 36m and 17s
 Games: 10000
-Turns: 194226
-avgTurns: 19.42
+Turns: 192728
+avgTurns: 19.27

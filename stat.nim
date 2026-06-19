@@ -150,7 +150,6 @@ proc reportedSquareVisitsPlusFile(path:string):Visits =
     result[idx] = reportVisits[idx] + fileVisits[idx]
 
 proc toStr*(visitsCounts:Visits):string =
-  # result.add "Square visits:\n"
   let squares:seq[tuple[name:string,visits:int]] = 
     (1..60).mapIt (board[it].name & " Nr. " & $it,visitsCounts[it])
   for square in squares.sorted (a,b) => b.visits - a.visits:
@@ -178,7 +177,6 @@ proc reportedCashedCardsPlusFile(path:string):CashedCards =
   reported.pairs.toSeq
 
 proc toStr*(cashedCards:CashedCards):string =
-  # result.add "Cashed cards:\n"
   for (title,count) in cashedCards.sorted (a,b) => b.count - a.count:
     result.add title&": "&($count)&"\n"
 

@@ -93,15 +93,8 @@ proc playCashPlans* =
       setConfigStateTo GameWon
       gameWon = true
     else:
+      turn.undrawnBlues += cashedPlans.mapIt(it.cardKind.nrOfCardsReward).sum
       undrawnBluesUpdate()
-      turn.undrawnBlues += 
-        cashedPlans.mapIt(
-          case it.cardKind
-          of Deed:2
-          of Plan:2
-          of Job:1
-          else:0
-        ).sum
 
 proc playNews =
   let news = turnPlayer.hand[^1]

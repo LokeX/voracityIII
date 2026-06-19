@@ -216,24 +216,25 @@ proc newsText(blue:BlueCard):seq[string] =
   else: result.add "Moves to: " &
     squares[blue.moveSquares[1]].name&" Nr."&($squares[blue.moveSquares[1]].nr)
 
-proc typesetBoxedText(blue:BlueCard):(Arrangement,float32) =
+proc typesetBoxedText(blue:BlueCard):Arrangement =
   var txt:seq[string]
   case blue.cardKind
   of Plan,Mission,Job,Deed:
     txt = blue.required squares
     txt.insert "Requires: ", 0
     txt.add "Rewards:\n" & ($blue.cash).insertSep('.')&" in cash"
+    let nrOfCards = blue.cardKind.nrOfCardsReward
+    if nrOfCards > 0:
+      txt.add "Draw "&($nrOfCards)&" card"&(if nrOfCards > 1: "s" else: "")
   of Event: txt.add blue.eventText
   of News: txt.add blue.newsText
-  let
-    font = setNewFont(roboto,13.0,color(0,0,0))
-    boxText = font.typeset txt.join "\n"
-  (boxText, boxText.layoutBounds.y)
+  setNewFont(roboto,13.0,color(0,0,0)).typeset txt.join "\n"
 
 proc paintTextBoxOn(card:BlueCard,img:var Image) =
   let
     (textPadX,textPadY,borderSize,shadowSize,angle) = (15.0,15.0,0.0,3.0,0.0)
-    (boxText, textHeight) = card.typesetBoxedText
+    boxText = card.typesetBoxedText
+    textHeight = boxText.layoutBounds.y
     boxPosX = 20.0
     boxWidth = img.width.toFloat-(boxPosX*2)-shadowSize-(borderSize*2)-3
     boxHeight = (textheight+(textPadY*2)+(borderSize*2))

@@ -16,11 +16,13 @@ proc getParams:seq[int] =
       break
 
 proc settingsFromParams:tuple[nrOfGames,nrOfPlayers:int] =
-  let prms = getParams()
+  var prms = getParams()
   (result.nrOfGames,result.nrOfPlayers) = (100,6)
   if prms.len == 1:
     result.nrOfGames = prms[0]
-  elif prms.len > 1: (result.nrOfGames,result.nrOfPlayers) = (prms[0],prms[1])
+  elif prms.len > 1: 
+    if prms[1] < 1 or prms[1] > 6: prms[1] = 6
+    (result.nrOfGames,result.nrOfPlayers) = (prms[0],prms[1])
 
 proc addVisits(visitsCount:var Visits,addVisits:Visits) =
   for i in 1..60: visitsCount[i] += addVisits[i]
@@ -30,7 +32,7 @@ proc statsToStr(nrOfGames,turnCount:int,time:float):string =
   result.add "Games: "&($nrOfGames)&"\n"
   result.add "Turns: "&($turnCount)&"\n"
   result.add "avgTurns: "
-  result.add formatFloat(float(turnCount)/float(nrOfGames),ffDecimal,2)&"\n"
+  result.add formatFloat(float(turnCount)/float(nrOfGames),ffDecimal,2)
 
 proc setNrOfComputerPlayers(nrOfPlayers:int) =
   for i in 0..playerKinds.high:
@@ -60,7 +62,7 @@ for gameNr in 1..gameSettings.nrOfGames:
   startGame()
   while not gameWon:
       aiTakeTurn()
-  echo "game won : ",turnPlayer.cash," cash, in ",turn.nr," turns"
+  echo $turnPlayer.color," won : ",turnPlayer.cash," cash, in ",turn.nr," turns"
   if recordStats:
     turnCount += turn.nr
     visitsCounts.addVisits reportedVisitsCount()
@@ -72,14 +74,17 @@ if recordStats:
     visits = visitsCounts.toStr()
     stats = statsToStr(gameSettings.nrOfGames,turnCount,time)
   writeFile(fileName,cards&visits&stats)
-  echo cards
-  echo visits
+  if verbose:
+    echo cards
+    echo visits
+  echo ""
   echo stats
-  echo "Wrote to file: "&fileName
+  echo ""
+  echo "Wrote all stats to file: "&fileName
 
 echo ""
 echo "Stat - parameter usage:"
 echo "1st param containing a number = nrOfGames   (default = 100)"
 echo "2nd param containing a number = nrOfPlayers (default = 6)"
-echo "-v = Verbose: print each turn played - in detail"
+echo "-v = Verbose: print each turn played plus visited squares and cashed cards"
 

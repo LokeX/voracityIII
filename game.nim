@@ -62,6 +62,13 @@ const
   gasStations* = [2,15,27,37,47]
   bars* = [1,16,18,20,28,35,40,46,51,54]
 
+proc nrOfCardsReward*(kind:CardKind):int =
+  case kind
+  of Deed:2
+  of Plan:2
+  of Job:1
+  else:0
+
 func squareKinds:array[0..60,SquareKind] =
   for idx in 0..60:
     result[idx] =

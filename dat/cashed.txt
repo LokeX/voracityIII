@@ -1,49 +1,81 @@
+Polterabend: 5
+Demolition: 5
+Hooked: 4
+Ludomania: 4
+Chicks in cages: 4
+Lipstick on a pig: 4
+Informer: 3
+Slumlord: 3
 Financing: 3
-Demolition: 3
+Redemption: 3
+Outsider: 3
+Human resources: 3
 Foreign aid: 3
-Informer: 2
-Hooked: 2
-Slumlord: 2
-Polterabend: 2
-Redemption: 2
-Ludomania: 2
-Human resources: 2
-Stiffs: 2
-Lucky bastard: 2
+Loads of stuff: 3
+Infiltration: 3
+Grand designs: 3
+Advisory board: 3
+Lawfare: 3
+Containment: 3
+Lucky bastard: 3
+Recycling: 2
+Rentseeking: 2
+Safe bet: 2
 Concuctions: 2
-Containment: 1
-Safe bet: 1
-Usery: 1
+Usery: 2
+Specimens: 2
+Brotherhood: 2
+Higher powers: 2
+Globalist: 2
+Knock knock: 2
+Rock solid claims: 2
+Diamonds are...: 2
+Flay'em: 2
+Choireboys: 2
+Healthplan: 2
+Bodyguard: 2
+Meat grinder: 2
+Secret weapon: 2
+Up yours: 2
+Circle jerk: 2
+Hooters: 2
+Stiffs: 2
+Pimp: 2
+Deadly cargo: 2
+Addictions: 2
+Protection: 2
+Blood diamants: 2
+Golden chains: 2
+Color revolution: 1
+Side effects: 1
+Burial at sea: 1
+Occupational hazard: 1
+Agent: 1
+Bail: 1
 Broken bones: 1
-Rock solid claims: 1
-Diamonds are...: 1
-Bodyguard: 1
-Meat grinder: 1
-Secret weapon: 1
+Legalese: 1
+Debt to society: 1
+Sing a long song: 1
+Spy: 1
 Moonshine: 1
+White collars: 1
 Blood suckers: 1
-Outsider: 1
+Sweethearts: 1
 Nose job: 1
-Up yours: 1
 Gangbangers: 1
-Chicks in cages: 1
 Grapevine: 1
+High society: 1
 Terrorism: 1
 Deadweight: 1
+VIP Lounge: 1
 Prescriptions: 1
 Et spiritus sancti: 1
-Hooters: 1
-Pimp: 1
-Deadly cargo: 1
-Protection: 1
-Loads of stuff: 1
 Underhanded: 1
-Lipstick on a pig: 1
-Infiltration: 1
-Grand designs: 1
-Recycling: 1
-Advisory board: 1
-Golden chains: 1
-Specimens: 1
-Rentseeking: 1
-Lawfare: 1
+Duty free: 1
+Express demands: 1
+Projects: 1
+Drugdealer: 1
+Acquittal: 1
+Bootlegging: 1
+Trans-action: 1
+Stove away: 1
