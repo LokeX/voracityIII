@@ -28,7 +28,6 @@ proc configStartGame =
   showMenu = false
 
 proc configGameWon =
-  # finalizeTurnReport()
   writeGamestats()
   updateStatsBatch()
   if turnPlayer.kind == Human or not players.anyHuman:

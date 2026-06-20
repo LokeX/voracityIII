@@ -87,6 +87,9 @@ template selectedBatchColor*:untyped =
 template batchSelected*:untyped =
   mouseOnBatchPlayerNr != -1 or pinnedBatchNr != -1
 
+template selectedBatchNr*:untyped =
+  max(mouseOnBatchPlayerNr,pinnedBatchNr)
+
 proc drawCursor*(b:var Boxy) =
   if turn.nr > 0 and showCursor:
     let
@@ -173,7 +176,7 @@ proc killMatrix:KillMatrix =
     for victim in PlayerColor:
       result[victim][killer] = killer.victims.count victim
 
-proc paintMatrixShadow(img:var Image):Image =
+proc paintMatrixShadow(img:Image):Image =
   var ctx = newImage(img.width+5,img.height+5).newContext
   ctx.fillStyle = color(0,0,0,100)
   ctx.fillRect(Rect(x:5,y:5,w:img.width.toFloat,h:img.height.toFloat))
@@ -334,7 +337,6 @@ proc statsBatchSpans:seq[Span] =
   if anyGameStats():
     let stats = getMatchingStats()
     if stats.hasData:
-      echo "stats has data"
       result = @[
         newSpan("Statistics ",robotoGreen),
         newSpan(if mouseOn statsBatch: "  -   click to reset\n" else: "\n",robotoWhite),
@@ -361,7 +363,7 @@ proc updateStatsBatch* =
 
 template statsBatchVisible*:untyped =
   statsBatch.spansLength > 0
-  
+
 proc drawStats*(b:var Boxy) =
   if statsBatch.spansLength > 0:
     let 

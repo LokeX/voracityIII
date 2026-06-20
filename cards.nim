@@ -430,14 +430,14 @@ proc showCards*(b:var Boxy) =
   elif pinnedCards == Discard or mouseOn discardPileArea:
     cards = blueDeck.discardPile
     header = "Discard pile"
-  elif batchSelected and selectedBatchColor.player.turnNr > 0:
+  elif batchSelected and players[selectedBatchNr].turnNr > 0:
     if drawSelectedPlayersHand:
       cards = players[mouseOnBatchPlayerNr].hand
       color = players[mouseOnBatchPlayerNr].color
       header = $color&" player's hand"
     else:
       cards = selectedBatchColor.reports.mapIt(it.cards.played[Cashed]).concat
-      color = players[max(mouseOnBatchPlayerNr,pinnedBatchNr)].color
+      color = players[selectedBatchNr].color
       header = $color&" player's cashed cards"
   else: 
     cards = turnPlayer.hand
@@ -449,7 +449,7 @@ proc showCards*(b:var Boxy) =
     b.paintCardsHeader(color,header)
 
 template showFooter:untyped =
-  (mouseOnBatchPlayerNr != -1 and selectedBatchColor.player.turnNr > 0) or 
+  (mouseOnBatchPlayerNr != -1 and players[mouseOnBatchPlayerNr].turnNr > 0) or 
   pinnedBatchNr != -1 or 
   pinnedCards == Discard or 
   mouseOn(discardPileArea) or

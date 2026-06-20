@@ -315,19 +315,6 @@ func cashesIn*(pieces:openArray[int],cards:seq[BlueCard]):Cashable =
     if pieces.isCashable card: result.cashable.add card
     else: result.notCashable.add card
 
-template player*(playerColor:PlayerColor):untyped =
-  var idx = -1
-  for i,player in players:
-    if player.color == playerColor:
-      idx = i
-      break
-  players[idx]
-
-# proc player*(playerColor:PlayerColor):Player =
-#   for player in players:
-#     if player.color == playerColor:
-#       return player
-
 proc discardCards*(player:var Player,deck:var Deck):seq[BlueCard] =
   while player.hand.len > 3:
     result.add player.hand[player.hand.high]
