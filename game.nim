@@ -14,7 +14,6 @@ type
     DieFace4 = 4,DieFace5 = 5,DieFace6 = 6
   Dice* = array[1..2,DieFace]
   KillablePiece* = tuple[playerNr,pieceNr:int]
-  PlayedKind* = enum Drawn,Played,Cashed,Discarded
   Cashable = tuple[cashable,notCashable:seq[BlueCard]]
   CardKind* = enum Deed,Plan,Job,Event,News,Mission
   BlueCard* = object
@@ -91,6 +90,7 @@ var
   playerKinds*:array[6,PlayerKind]
   players*:seq[Player]
   selectedMove*:Move
+
   statGame*:bool
   gameWon*:bool
 
@@ -228,11 +228,8 @@ func anyComputer*(players:seq[Player]):bool =
 func anyHandles*(handles:seq[string]):bool =
   handles.anyIt it.len > 0
 
-func nrOfRemovedPieces*(player:Player):int =
-  player.pieces.count 0
-
 iterator legalPiecesIter*(pieces:openArray[int],cash:int):(int,int) =
-  let nrAllowed = cash div game.piecePrice
+  let nrAllowed = cash div piecePrice
   var count = 0
   for pieceNr,square in pieces:
     if square == 0:
@@ -278,7 +275,7 @@ func killablePieceOn*(players:seq[Player],square:int):KillablePiece =
           inc count
           if count > 1: 
             return (-1,-1)
-          else: result = (playerNr,pieceNr)
+          result = (playerNr,pieceNr)
 
 func nrOfPiecesOnBars*(player:Player):int =
   player.pieces.countIt it.isBar
@@ -315,6 +312,9 @@ func cashesIn*(pieces:openArray[int],cards:seq[BlueCard]):Cashable =
     if pieces.isCashable card: result.cashable.add card
     else: result.notCashable.add card
 
+template cashesIn*(player:Player):untyped =
+  player.pieces.cashesIn player.hand
+
 proc discardCards*(player:var Player,deck:var Deck):seq[BlueCard] =
   while player.hand.len > 3:
     result.add player.hand[player.hand.high]
@@ -328,7 +328,7 @@ proc cashInPlansTo*(player:var Player,deck:var Deck):seq[BlueCard] =
   player.cash += cashable.mapIt(it.cash).sum
   cashable
 
-proc newDefaultPlayers*:seq[Player] =
+proc newSetupPlayers*:seq[Player] =
   for i,kind in playerKinds:
     result.add Player(
       kind:kind,
@@ -336,7 +336,7 @@ proc newDefaultPlayers*:seq[Player] =
       pieces:highways
     )
 
-proc newPlayers*:seq[Player] =
+proc newGamePlayers*:seq[Player] =
   var 
     randomPosition = rand(5)
     playerSlots:array[6,Player]
@@ -366,4 +366,4 @@ template initGame* =
   board = newBoard "dat\\board.txt"
   blueDeck = newDeck "decks\\blues.txt"
   for i,kind in playerKindsFromFile(): playerKinds[i] = kind
-  players = newDefaultPlayers()
+  players = newSetupPlayers()

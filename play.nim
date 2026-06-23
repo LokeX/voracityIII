@@ -225,7 +225,7 @@ proc movePiece =
 proc setupGame* =
   turn = (0,0,false,0)
   blueDeck.resetDeck
-  players = newDefaultPlayers()
+  players = newSetupPlayers()
   setConfigStateTo SetupGame
 
 # proc endGame =
@@ -235,7 +235,7 @@ proc setupGame* =
 
 proc startGame* =
   inc turn.nr
-  players = newPlayers()
+  players = newGamePlayers()
   players[0].turnNr = 1
   turnReports.setLen 0
   initTurnReport()

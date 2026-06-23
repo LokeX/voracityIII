@@ -64,7 +64,7 @@ func nrOfcovers(pieces,squares:seq[int],maxDepth,depth:int):int =
         break
     coverDepth
 
-template nrOfcovers*(pieces,squares:untyped):untyped = 
+template nrOfcovers(pieces,squares:untyped):untyped = 
   pieces.nrOfcovers(squares,squares.len,0)
 
 func coverAll(pieces,squares:seq[int]):bool = 
@@ -97,20 +97,6 @@ func cover(pieces:seq[int],card:BlueCard):bool =
     pieces.cover(card.squares.required)
   else: pieces.coverOneInMany(card.squares.oneInMany,card.squares.required[0])
 
-func oneInMoreBonus(hypothetical:Hypothetic,blueCard:BlueCard,square,reward:int):int =
-  let requiredSquare = blueCard.squares.required[0]
-  if square == requiredSquare:
-    if blueCard.squares.oneInMany.anyIt hypothetical.pieces.count(it) > 0: 
-      reward
-    else: 
-      case hypothetical.pieces.count requiredSquare:
-        of 0:reward div 2
-        of 1:reward
-        else:0
-  elif hypothetical.pieces.count(requiredSquare) > 0: 
-    reward
-  else: reward div 2
-
 func rewardValue(hypothetical:Hypothetic,card:BlueCard):int =
   let 
     deed = card.squares.required.len == 1
@@ -129,22 +115,32 @@ func blueVals(hypothetical:Hypothetic,squares:openArray[int]):array[12,int] =
           piecesOn = requiredSquares.mapIt hypothetical.pieces.count it
           requiredPiecesOn = requiredSquares.mapIt card.squares.required.count it
           requiredIndexes = toSeq 0..requiredSquares.high
-          bonus = 
+          reward = 
             (hypothetical.rewardValue(card) div card.squares.required.len)*
             (requiredIndexes.mapIt(min(piecesOn[it],requiredPiecesOn[it])).sum+1)
         for idx in requiredIndexes:
           if squareIndexes[idx] != -1 and piecesOn[idx]-requiredPiecesOn[idx] < 1:
-            result[squareIndexes[idx]] += bonus
-    elif card.squares.oneInMany.len == 0:
-      if (let idx = squares.find(card.squares.required[0]); idx > -1):
-        result[idx] += hypothetical.rewardValue card
-    else:
+            result[squareIndexes[idx]] += reward
+    elif card.squares.oneInMany.len > 0:
       let rewardValue = hypothetical.rewardValue card
       for idx,square in squares:
-        if square == card.squares.required[0] or square in card.squares.oneInMany:
-          result[idx] += hypothetical.oneInMoreBonus(card,square,rewardValue)
+        var reward = 0
+        if square == card.squares.required[0]:
+          if card.squares.oneInMany.anyIt hypothetical.pieces.count(it) > 0: 
+            reward = rewardValue else: reward = rewardValue div 2
+        elif square in card.squares.oneInMany:
+          if (let nrOnSquare = hypothetical.pieces.count square; nrOnSquare > 0):
+            let nrOnAllSquares = 
+              card.squares.oneInMany.mapIt(hypothetical.pieces.count it).sum
+            if nrOnSquare == nrOnAllSquares:
+              if hypothetical.pieces.count(card.squares.required[0]) > 0: 
+                reward = rewardValue else: reward = rewardValue div 2
+        result[idx] += reward
+    else:
+      if (let idx = squares.find(card.squares.required[0]); idx > -1):
+        result[idx] += hypothetical.rewardValue card
 
-func requiredWith(pieces:openArray[int],cards:seq[BlueCard],square:int):int =
+func required(pieces:openArray[int],cards:seq[BlueCard],square:int):int =
   if cards.len == 0: 
     return
   elif (result = cards.mapIt(it.squares.required.count square).max; result > 0):
@@ -157,7 +153,7 @@ func requiredWith(pieces:openArray[int],cards:seq[BlueCard],square:int):int =
         return if pieces.anyIt it in squares: 0 else: 1
 
 template requiredPiecesOn(it,square:untyped):int =
-  it.pieces.requiredWith(when typeof(it) is Hypothetic:it.cards else:it.hand,square)
+  it.pieces.required(when typeof(it) is Hypothetic:it.cards else:it.hand,square)
 
 func posPercentages(hypothetical:Hypothetic,squares:openArray[int]):array[12,float] =
   var freePieces,freePiecesOnSquare:int
@@ -274,6 +270,19 @@ func winningMoveIn(hypothetical:Hypothetic,moves:seq[Move]):Move =
     else: pieces[move.pieceNr] = move.fromSquare
   result.pieceNr = -1
 
+func bestMove*(hypothetical:Hypothetic,diceMoves:DiceMoves,dice:Dice):Move =
+  if diceMoves[^1].moves.len > 0: 
+    let bestDie = 
+      if diceMoves[dice[1]].bestMove.eval >= diceMoves[dice[2]].bestMove.eval or 
+      diceMoves[dice[1]].isWinningMove: 1 else: 2
+    diceMoves[dice[bestDie]].bestMove
+  else: 
+    let
+      moves = hypothetical.moves [dice[1].ord,dice[2].ord]
+      winningMove = hypothetical.winningMoveIn moves
+    if winningMove.pieceNr > -1: winningMove
+    else: hypothetical.bestMoveIn moves
+
 func allDiceMoves*(hypothetical:Hypothetic):DiceMoves =
   for die in DieFace:
     result[die].moves = hypothetical.moves [die.ord,die.ord]
@@ -294,19 +303,6 @@ func isBestDieIn(dieQuery:DieFace,diceMoves:DiceMoves):bool =
         bestDie = die
     dieQuery == bestDie
 
-func bestMove*(hypothetical:Hypothetic,diceMoves:DiceMoves,dice:Dice):Move =
-  if diceMoves[^1].moves.len > 0: 
-    let bestDie = 
-      if diceMoves[dice[1]].bestMove.eval >= diceMoves[dice[2]].bestMove.eval or 
-      diceMoves[dice[1]].isWinningMove: 1 else: 2
-    diceMoves[dice[bestDie]].bestMove
-  else: 
-    let
-      moves = hypothetical.moves [dice[1].ord,dice[2].ord]
-      winningMove = hypothetical.winningMoveIn moves
-    if winningMove.pieceNr > -1: winningMove
-    else: hypothetical.bestMoveIn moves
-
 proc aiShouldReroll*(hypothetical:Hypothetic,diceMoves:var DiceMoves,dice:Dice):bool =
   if dice[1] == dice[2]:
     if diceMoves[^1].moves.len == 0: 
@@ -314,16 +310,12 @@ proc aiShouldReroll*(hypothetical:Hypothetic,diceMoves:var DiceMoves,dice:Dice):
     not dice[^1].isBestDieIn diceMoves
   else: false
 
-func barVal(hypothetical:Hypothetic):int = 
+func baseEvalBoard(hypothetical:Hypothetic):EvalBoard =
   let 
     legalPieces = hypothetical.legalPieces
     cardVal = (4-hypothetical.cards.countIt(legalPieces.cover it))*15000
-  valBar-(3000*hypothetical.pieces.countIt(it.isBar))+cardVal
-
-func baseEvalBoard(hypothetical:Hypothetic):EvalBoard =
-  let barVal = hypothetical.barVal
-  for bar in bars: 
-    result[bar] = barVal
+    barVal = valBar-(3000*hypothetical.pieces.countIt(it.isBar))+cardVal
+  for bar in bars: result[bar] = barVal
 
 func boardInit(player:Player):EvalBoard =
   baseEvalBoard (
@@ -438,14 +430,14 @@ proc eventMovesEval*(player:Player,event:BlueCard):seq[Move] =
 proc wantsNoProtectionAfter(player:Player,move:Move):bool =
   var hypo = player.hypotheticalInit
   hypo.pieces[move.pieceNr] = move.toSquare
-  hypo.cards = hypo.pieces.cashesIn(hypo.cards).notCashable
+  hypo.cards = player.cashesIn.notCashable
   let noKillEval = hypo.evalPos
   hypo.pieces[move.pieceNr] = 0
   let killEval = hypo.evalPos
   killEval > noKillEval
 
 proc shouldKillEnemyOn*(player:Player,move:Move):bool =
-  if player.cash-(player.nrOfRemovedPieces*piecePrice) <= startCash div 2:
+  if player.cash-(player.pieces.count(0)*piecePrice) <= startCash div 2:
     return
   (move.toSquare.isBar and (players.len < 3 or player.nrOfPiecesOnBars > 0)) or 
   rand(0..99) <= player.agro or player.wantsNoProtectionAfter move

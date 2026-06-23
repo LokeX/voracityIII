@@ -41,7 +41,7 @@ proc setNrOfComputerPlayers(nrOfPlayers:int) =
     else: playerKinds[i] = None
 
 const
-  fileName = "dat\\statlog.txt"
+  statFile = "dat\\statlog.txt"
 
 let
   time = cpuTime()
@@ -61,7 +61,7 @@ for gameNr in 1..gameSettings.nrOfGames:
   setupGame()
   startGame()
   while not gameWon:
-      aiTakeTurn()
+    aiTakeTurn()
   echo $turnPlayer.color," won : ",turnPlayer.cash," cash, in ",turn.nr," turns"
   if recordStats:
     turnCount += turn.nr
@@ -73,14 +73,14 @@ if recordStats:
     cards = cashedCards.pairs.toSeq.toStr()
     visits = visitsCounts.toStr()
     stats = statsToStr(gameSettings.nrOfGames,turnCount,time)
-  writeFile(fileName,cards&visits&stats)
+  writeFile(statFile,cards&visits&stats)
   if verbose:
     echo cards
     echo visits
   echo ""
   echo stats
   echo ""
-  echo "Wrote all stats to file: "&fileName
+  echo "Wrote all stats to file: "&statFile
 
 echo ""
 echo "Stat - parameter usage:"

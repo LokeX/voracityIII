@@ -9,6 +9,7 @@ import sugar
 import math
 
 type
+  PlayedKind* = enum Drawn,Played,Cashed,Discarded
   TurnReport* = object
     turnNr*:int
     player*:tuple[color:PlayerColor,kind:PlayerKind]
@@ -142,7 +143,7 @@ proc readVisitsFile(path:string):Visits =
       except:discard
       inc square
 
-proc reportedSquareVisitsPlusFile(path:string):Visits =
+proc squareVisitsPlusFile(path:string):Visits =
   let 
     reportVisits = reportedVisitsCount()
     fileVisits = readVisitsFile path
@@ -156,11 +157,10 @@ proc toStr*(visitsCounts:Visits):string =
     result.add square.name & ": " & $square.visits & "\n"
 
 proc reportedCashedCards*:CountTable[string] =
-  let 
-    titles = collect:
-      for turnReport in turnReports:
-        for card in turnReport.cards.played[Cashed]: 
-          card.title
+  let titles = collect:
+    for turnReport in turnReports:
+      for card in turnReport.cards.played[Cashed]: 
+        card.title
   titles.toCountTable
 
 proc readCashedCardsFrom(path:string):CashedCards =
@@ -170,7 +170,7 @@ proc readCashedCardsFrom(path:string):CashedCards =
       try: result.add (lineSplit[0],lineSplit[^1].strip.parseInt)
       except:discard
 
-proc reportedCashedCardsPlusFile(path:string):CashedCards =
+proc cashedCardsPlusFile(path:string):CashedCards =
   var reported = reportedCashedCards()
   for (title,count) in readCashedCardsFrom path:
     reported.inc(title,count)
@@ -186,8 +186,7 @@ proc aliasCounts(aliases:openArray[string]):AliasCounts =
       result.add (alias,playerHandles.count alias)
 
 proc kindCounts(kinds:openArray[PlayerKind]):KindCounts =
-  for kind in kinds:
-    inc result[kind]
+  for kind in kinds: inc result[kind]
 
 proc match(stats:Stats,aliasCounts:AliasCounts):bool =
   for (alias,count) in aliasCounts:
@@ -262,12 +261,10 @@ func aliasToChars(alias:string):Alias =
     else: return
 
 func kindToOrd(kinds:array[6,PlayerKind]):array[6,int] =
-  for i,kind in kinds:
-    result[i] = kind.ord
+  for i,kind in kinds: result[i] = kind.ord
 
 func toChars(aliases:array[6,string]):array[6,Alias] =
-  for i,alias in aliases:
-    result[i] = alias.aliasToChars
+  for i,alias in aliases: result[i] = alias.aliasToChars
 
 proc toFileStats(stats:GameStats[string,PlayerKind]):GameStats[Alias,int] =
   GameStats[Alias,int](
@@ -280,16 +277,13 @@ proc toFileStats(stats:GameStats[string,PlayerKind]):GameStats[Alias,int] =
 
 func aliasToString(alias:Alias):string =
   for ch in alias:
-    if ch != '\n': result.add ch
-    else: return
+    if ch != '\n': result.add ch else: return
 
 func ordToKind(ks:array[6,int]):array[6,PlayerKind] =
-  for i,kind in ks:
-    result[i] = PlayerKind(kind)
+  for i,kind in ks: result[i] = PlayerKind(kind)
 
 func toStrings(aliases:array[6,Alias]):array[6,string] =
-  for i,alias in aliases:
-    result[i] = alias.aliasToString
+  for i,alias in aliases: result[i] = alias.aliasToString
 
 proc toGameStats(stats:GameStats[Alias,int]):GameStats[string,PlayerKind] =
   GameStats[string,PlayerKind](
@@ -309,8 +303,8 @@ proc readGameStatsFrom*(path:string) =
 
 proc writeGamestats* =
   let 
-    allCashedCards = reportedCashedCardsPlusFile(cashedFile).toStr
-    allVisits = reportedSquareVisitsPlusFile(visitsFile).toStr
+    allCashedCards = cashedCardsPlusFile(cashedFile).toStr
+    allVisits = squareVisitsPlusFile(visitsFile).toStr
   writeFile(cashedFile,allCashedCards)
   writeFile(visitsFile,allVisits)
   if players.anyHuman and players.anyComputer:
